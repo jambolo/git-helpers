@@ -1,0 +1,10 @@
+#!/bin/bash
+
+if [ $# -ne 2 ]; then
+    echo "Usage: git-sync <branch1> <branch2>"
+    echo "Unifies two branches such that commits in <branch1> are followed by commits in <branch2>."
+    exit 1;
+fi
+
+
+echo "First, rebasing $2 onto $1" && git rebase $1 $2 && echo "Now, fast-forwarding $1 to $2" && git checkout $1 && git merge $2

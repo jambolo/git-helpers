@@ -1,0 +1,9 @@
+#!/bin/bash
+
+if [ $# -ne 1 ]; then
+    echo "Usage: git-showtool <commit>"
+    echo "Shows the differences between a commit and it predecessor using difftool"
+    exit 1;
+fi
+
+git difftool --dir-diff $1~1..$1

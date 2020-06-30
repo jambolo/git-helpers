@@ -1,0 +1,9 @@
+#!/bin/bash
+
+if [ $# -ne 2 ]; then
+    echo "Usage: git-diff-branches <branch> <branch>"
+    echo "Displays the differences between two branches using difftool"
+    exit 1;
+fi
+
+git difftool --dir-diff $1..$2

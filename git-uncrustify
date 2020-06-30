@@ -1,0 +1,14 @@
+#!/bin/bash
+
+if [ $# -ne 0 ]; then
+    echo "Usage: git-uncrustify"
+    echo "Runs uncrustify on all modified, added, and deleted (sorry, no choice) c/cpp/h files in the working tree."
+    exit 1;
+fi
+
+ROOT_DIR=`git rev-parse --show-toplevel`
+cd $ROOT_DIR
+FILES=`git ls-files --modified --other | grep -E '\.(c|cpp|h)$'`
+for file in $FILES; do
+    /c/Program\ Files\ \(x86\)/uncrustify/uncrustify.exe --no-backup -l CPP -c ~/AppData/Roaming/Uncrustify/uncrustify.cfg $file
+done

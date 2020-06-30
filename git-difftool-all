@@ -1,0 +1,11 @@
+#!/bin/bash
+
+if [ $# -gt 1 ]; then
+    echo "Usage: git-difftool-all [path]"
+    echo "Displays the differences for <path> between the working directory and HEAD using difftool"
+    exit 1;
+fi
+
+for name in $(git diff --name-only $1); do
+    git difftool -y $1 $name &
+done

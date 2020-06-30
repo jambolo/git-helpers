@@ -1,0 +1,17 @@
+#!/bin/bash
+
+if [ $# -ne 2 ]; then
+    echo "Usage: git-rebase-all <branch> <pattern>"
+    echo "Rebases all branches matching <pattern> onto <branch>"
+    exit 1;
+fi
+
+pattern=refs/heads/$2
+branches=$(git for-each-ref --format='%(refname:short)' "$pattern")
+for b in $branches; do
+    echo
+    echo "-- Rebasing $b"
+    git rebase $1 $b
+    rc=$?
+    if [ $rc -ne 0 ] ; then break; fi
+done

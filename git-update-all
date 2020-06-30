@@ -1,0 +1,10 @@
+#!/bin/bash
+
+if [ $# -ne 0 ]; then
+    echo "Usage: git-update-all"
+    echo "Fetches and fast-forwards all branches and submodules, and then updates all submodules"
+    exit 1;
+fi
+
+git ffwd-all
+git submodule update --init --recursive

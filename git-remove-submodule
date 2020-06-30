@@ -1,0 +1,15 @@
+#!/bin/bash
+
+if [ $# -ne 1 ] && [ $# -ne 2 ]; then
+    echo "Usage: git-remove-submodule <path>"
+    echo "Removes a submodule completely."
+    exit 1;
+fi
+
+if [ $# -gt 1 ]; then
+    COMMENT=$2
+else
+    COMMENT="Removed submodule $1"
+fi
+
+git submodule deinit $1 && git rm $1 && git commit -m "$COMMENT" && rm -rf .git/modules/$1

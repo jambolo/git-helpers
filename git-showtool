@@ -2,7 +2,7 @@
 
 if [ $# -ne 1 ]; then
     echo "Usage: git-showtool <commit>"
-    echo "Shows the differences between a commit and it predecessor using difftool"
+    echo "Shows the differences between a commit and its predecessor using difftool"
     exit 1;
 fi
 

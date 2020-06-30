@@ -2,7 +2,7 @@
 
 if [ $# -ne 0 ]; then
     echo "Usage: git-pull-if-needed"
-    echo "The remote repo is pulled and the submodules are updated if the local repo is behind and hasn't diverged"
+    echo "The remote branch is pulled and the submodules are updated if the local repo is behind and hasn't diverged"
     exit 1;
 fi
 

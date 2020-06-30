@@ -74,3 +74,13 @@ Runs uncrustify on all modified, added, and deleted (sorry, no choice) c/cpp/h f
 Fetches and fast-forwards all branches and submodules, and then updates all submodules
 
     git-update-all
+
+## Aliases
+Git commands with options that I use a lot
+
+* alias grevert='git checkout --': Undoes any unstaged changes to the specified files
+* alias gsquash='git rebase -i': Rewrites history
+* alias gunstage='git reset HEAD': Unstages the specified files
+* alias ggraph='git log --graph ...: Draws the branch graph the way that I like it
+* alias glog='git log ...: Formats the log the way that I like it
+* alias gamend='git commit --amend --no-edit': No-fuss amended commits

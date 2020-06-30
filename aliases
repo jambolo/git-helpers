@@ -1,0 +1,6 @@
+alias grevert='git checkout --'
+alias gsquash='git rebase -i'
+alias gunstage='git reset HEAD'
+alias ggraph='git log --graph --date=relative --format=format:"%C(ul yellow)%h%Creset - %C(bold green)(%ar)%C(auto)%d %C(white)%s %C(dim white)- %an"'
+alias glog='git log --format=format:"%C(yellow)%h %C(auto)%d %C(white)%s %C(dim white)- %an" -n 30'
+alias gamend='git commit --amend --no-edit'

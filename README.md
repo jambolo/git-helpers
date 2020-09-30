@@ -49,6 +49,9 @@ Runs uncrustify on all modified, added, and deleted (sorry, no choice) c/cpp/h f
 #### git-update-all
 Fetches and fast-forwards all branches and submodules, and then updates all submodules
 
+#### node-init-default
+Sets up a node project and commits it to a new git repo
+
 ## Aliases
 Git commands with options that I use a lot
 

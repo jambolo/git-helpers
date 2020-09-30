@@ -1,0 +1,29 @@
+#!/bin/bash
+
+if [ $# -ne 0 ]; then
+    echo "Usage: node-init-default"
+    echo "Initializes a brand new node project"
+    exit 1;
+fi
+
+echo "*** Creating git repo ..."
+git init
+git commit --allow-empty -m "New repo"
+
+echo
+echo "*** Creating .gitignore ..."
+npx gitignore node
+git add --all
+git commit -m "Added default .gitignore"
+
+echo
+echo "*** Creating MIT license ..."
+npx license MIT
+git add --all
+git commit -m "Added MIT License"
+
+echo
+echo "*** Initializing node project ..."
+npm init -y
+git add --all
+git commit -m "Added default package.json"

@@ -1,0 +1,47 @@
+[core]
+	preloadindex = true
+	fscache = true
+	editor = 'C:/Program Files/Notepad++/notepad++.exe' -multiInst -nosession -noPlugin
+	autocrlf = true
+	excludesfile = C:\\Users\\John\\Documents\\gitignore_global.txt
+[filter "lfs"]
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+	clean = git-lfs clean -- %f
+[user]
+	name = John Bolton
+	email = jambolo@users.noreply.github.com
+[diff]
+    guitool = Araxis
+[difftool]
+    prompt = false
+[difftool "Araxis"]
+    path = C:/Program Files/Araxis/Araxis Merge/Compare.exe
+[difftool "sourcetree"]
+	cmd = 'C:/Program Files/Araxis/Araxis Merge/compare.exe' \"$LOCAL\" \"$REMOTE\"
+[merge]
+	tool = Araxis
+[mergetool]
+	keepBackup = false
+[mergetool "sourcetree"]
+	cmd = 'C:/Program Files/Araxis/Araxis Merge/compare.exe' -wait -merge -3 \"$LOCAL\" \"$BASE\" \"$REMOTE\" \"$MERGED\"
+	trustExitCode = true
+[mergetool "Araxis"]
+    path = C:/Program Files/Araxis/Araxis Merge/Compare.exe
+[push]
+	default = simple
+[alias]
+	diff-branches = !sh git-diff-branches.sh
+	difftool-all = !sh git-difftool-all.sh
+	ffwd = !sh git-ffwd.sh
+	ffwd-all = !sh git-ffwd-all.sh
+	pull-branch = !sh git-pull-branch.sh
+	pull-if-needed = !sh git-pull-if-needed.sh
+	rebase-all = !sh rebase-all.sh
+	showtool = !sh git-showtool.sh
+	stash-commits = !sh git-stash-commits.sh
+	status-all = !sh git-status-all.sh
+	sync = !sh git-sync.sh
+	uncrustify = !sh git-uncrustify.sh
+	update-all = !sh git-update-all.sh

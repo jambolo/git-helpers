@@ -1,0 +1,10 @@
+#!/bin/bash
+
+if [ $# -ne 0 ]; then
+    echo "Usage: git-push-wip"
+    echo "Creates a branch named WIP, commits uncommitted changes to it, and pushes to origin."
+    exit 1;
+fi
+
+git status && echo "Creating wip branch ..." && git checkout -b wip && echo "Committing changes ..." && git add . && git commit -m "WIP" && echo "Pushing to origin ..." && git push --set-upstream origin wip
+

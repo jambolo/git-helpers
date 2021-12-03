@@ -25,7 +25,10 @@ git commit -m "Added MIT License"
 echo
 echo "*** Initializing node project using yarn ..."
 yarn set version berry
-yarn init
+yarn init -yp
+echo "" >> .yarnrc.yml
+echo "# Some node projects require node_modules" >> .yarnrc.yml
+echo "#nodeLinker: node-modules" >> .yarnrc.yml
 yarn install
 git add --all
 git commit -m "Added yarn, default README.md, and default package.json"

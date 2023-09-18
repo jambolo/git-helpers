@@ -23,9 +23,8 @@ git add --all
 git commit -m "Added MIT License"
 
 echo
-echo "*** Initializing node project using yarn ..."
-yarn set version berry
-yarn init -yp
+echo "*** Initializing node project using yarn 2... ***"
+yarn init -2 -p
 echo "" >> .yarnrc.yml
 echo "# Some node projects require node_modules" >> .yarnrc.yml
 echo "#nodeLinker: node-modules" >> .yarnrc.yml

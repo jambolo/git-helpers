@@ -14,7 +14,7 @@ echo
 echo "*** Creating .gitignore ..."
 npx gitignore node
 git add --all
-git commit -m "Added default .gitignore"
+git commit -m "Added node.js default .gitignore"
 
 echo
 echo "*** Creating MIT license ..."
@@ -23,7 +23,15 @@ git add --all
 git commit -m "Added MIT License"
 
 echo
+echo "*** Creating default README.md ..."
+echo "# $(basename "$PWD")" >> README.md
+git add --all
+git commit -m "Added default README.md"
+
+echo
 echo "*** Initializing node project ..."
 npm init -y
+npm install
 git add --all
-git commit -m "Added default package.json"
+git commit -m "Added default package.json and package-lock.json"
+

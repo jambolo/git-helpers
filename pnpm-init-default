@@ -1,0 +1,36 @@
+#!/bin/bash
+
+if [ $# -ne 0 ]; then
+    echo "Usage: pnpm-init-default"
+    echo "Initializes a brand new node project"
+    exit 1;
+fi
+
+echo "*** Creating git repo ..."
+git init
+git commit --allow-empty -m "New repo"
+
+echo
+echo "*** Creating .gitignore ..."
+npx gitignore node
+git add --all
+git commit -m "Added node.js default .gitignore"
+
+echo
+echo "*** Creating MIT license ..."
+npx license MIT
+git add --all
+git commit -m "Added MIT License"
+
+echo
+echo "*** Creating default README.md ..."
+echo "# $(basename "$PWD")" >> README.md
+git add --all
+git commit -m "Added default README.md"
+
+echo
+echo "*** Initializing node project using pnpm ..."
+pnpm init
+pnpm install
+git add --all
+git commit -m "Added default package.json and pnpm-lock.yaml"

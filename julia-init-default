@@ -1,0 +1,12 @@
+#!/bin/bash
+
+if [ -z "$1" ]; then
+    echo "Usage: julia-init-default <project name>"
+    echo "Initializes a brand new julia project"
+    exit 1;
+fi
+
+PROJECT_NAME="$1"
+
+PLUGINS='[ProjectFile(; version=v"0.1.0"), !Readme, Git(; ignore=["*.jl.cov", "*.jl.*.cov", "*.jl.mem", "docs/build/", "docs/site/"]), !CompatHelper, !TagBot, !GitHubActions, !Dependabot]'
+julia --project="$PROJECT_NAME" -e "using PkgTemplates; PkgTemplates.Template(; interactive=false,dir=\".\", plugins=$PLUGINS)(\"$PROJECT_NAME\")"

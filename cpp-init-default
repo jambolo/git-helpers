@@ -1,14 +1,94 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-if [ $# -ne 1 ]; then
-    echo "Usage: cpp-init-default <project-name>"
-    echo "Initializes a brand new C++ project in a new directory"
+# Default values
+library=false
+EXE_NAME=""
+PROJECT_DESCRIPTION=""
+
+print_help() {
+    cat <<EOF
+Usage: $0 [options] <project name>
+
+Options:
+  -h, --help                       Show this help message and exit
+  -x, --exe <name>                 Set the name for the executable if different from the project name (executable only)
+  -l, --library                    Create a library rather than an executable (boolean flag)
+  -d, --description <description>  Provide a project description
+
+Examples:
+  $0 Myexe --exe myexe --description "A sample project"
+  $0 Mylib --library --description "A library project"
+EOF
+}
+
+# Parse command line options
+PARSED=$(getopt -o hx:ld: --long help,exe:,library,description: -- "$@")
+if [[ $? -ne 0 ]]; then
+    print_help
+    exit 1
+fi
+
+eval set -- "$PARSED"
+
+while true; do
+    case "$1" in
+        -h|--help)
+            print_help
+            exit 0
+            ;;
+        -x|--exe)
+            EXE_NAME="$2"
+            shift 2
+            ;;
+        -l|--library)
+            library=true
+            shift
+            ;;
+        -d|--description)
+            PROJECT_DESCRIPTION="$2"
+            shift 2
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            echo "Unexpected option: $1"
+            exit 1
+            ;;
+    esac
+done
+
+# --exe and --library are mutually exclusive
+if [ "$library" = true ] && [ -n "$EXE_NAME" ]; then
+    echo "Error: --exe and --library options are mutually exclusive."
+    print_help
     exit 1;
 fi
 
-PROJECT_NAME="$1"
+# Check for project name argument
+if [ $# -lt 1 ]; then
+    echo "Error: Project name is required."
+    print_help
+    exit 1;
+fi
 
-echo "*** Creating C++ project ..."
+# Check for too many arguments
+if [ $# -gt 1 ]; then
+    echo "Error: Too many arguments provided."
+    print_help
+    exit 1;
+fi
+
+
+PROJECT_NAME="${!#}"
+
+# Set EXE_NAME to project name if not provided
+if [ -z "$EXE_NAME" ]; then
+    EXE_NAME="$PROJECT_NAME"
+fi
+
+echo "*** Creating C++ CMake project ..."
 mkdir "$PROJECT_NAME"
 cd "$PROJECT_NAME"
 
@@ -24,6 +104,10 @@ cat > .gitignore << 'EOF'
 out/
 .vs/
 CMakeSettings.json
+CMakePresets.json
+
+# Araxis Merge artifacts
+*.orig
 EOF
 
 git add .gitignore
@@ -34,7 +118,7 @@ echo "*** Creating MIT license ..."
 cat > LICENSE << EOF
 MIT License
 
-Copyright (c) $(date +%Y) 
+Copyright (c) $(date +%Y)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -64,24 +148,29 @@ echo "# $PROJECT_NAME" > README.md
 git add README.md
 git commit -m "Added default README.md"
 
-echo
 echo "*** Creating default CMakeLists.txt ..."
-sed "s/@PROJECT_NAME@/$PROJECT_NAME/g" ../\!EXE_TEMPLATE_CMakeLists.txt.in > CMakeLists.txt
+if [ "$library" = true ]; then
+    sed -e "s/@PROJECT_NAME@/$PROJECT_NAME/g" \
+        -e "s/@PROJECT_DESCRIPTION@/$PROJECT_DESCRIPTION/g" \
+        ../!LIBRARY_TEMPLATE_CMakeLists.txt.in > CMakeLists.txt
+else
+    sed -e "s/@PROJECT_NAME@/$PROJECT_NAME/g" \
+        -e "s/@EXECUTABLE_NAME@/$EXE_NAME/g" \
+        -e "s/@PROJECT_DESCRIPTION@/$PROJECT_DESCRIPTION/g" \
+        ../!EXE_TEMPLATE_CMakeLists.txt.in > CMakeLists.txt
+fi
 git add CMakeLists.txt
 git commit -m "Added default CMakeLists.txt"
 
-echo
-echo "*** Creating a placeholder main.cpp, but not committing it ..."
-cat > main.cpp << 'EOF'
-#include <iostream>
-
-int main(char * argv[], int argc)
-{
-    std::cout << "Hello, World!" << std::endl;
-    return 0;
-}
-EOF
+echo "*** Creating miscellaneous and placeholder files ..."
+if [ "$library" = true ]; then
+    mkdir -p include/${PROJECT_NAME}
+    touch include/${PROJECT_NAME}/${PROJECT_NAME}.h ${PROJECT_NAME}.cpp
+    cp ../!LIBRARY_TEMPLATE_Doxyfile.in Doxyfile.in
+else
+    touch main.cpp
+fi
 
 echo
-echo "*** C++ project '$PROJECT_NAME' created"
+echo "*** C++ CMake project '$PROJECT_NAME' created"
 

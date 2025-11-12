@@ -1,4 +1,6 @@
-#!/bin/bash
+#!/usr/bin/env bash
+#
+# Runs git difftool in parallel on all files that differ between the working directory and HEAD
 
 if [ $# -gt 1 ]; then
     echo "Usage: git-difftool-all [path]"
@@ -6,6 +8,13 @@ if [ $# -gt 1 ]; then
     exit 1;
 fi
 
-for name in $(git diff --name-only $1); do
-    git difftool -y $1 $name &
-done
+files=$(git diff --name-only "$1")
+if [ -z "$files" ]; then
+    echo "No differences found."
+    exit 0
+fi
+while IFS= read -r name; do
+    git difftool -y "$name" &
+done <<< "$files"
+
+wait

@@ -1,17 +1,43 @@
-#!/bin/bash
+#!/usr/bin/env bash
+#
+# Rebases all branches whose name matches a given pattern onto a specified branch
 
 if [ $# -ne 2 ]; then
-    echo "Usage: git-rebase-all <branch> <pattern>"
-    echo "Rebases all branches matching <pattern> onto <branch>"
+    echo "Usage: git-rebase-all <base branch> <pattern>"
+    echo "Rebases all branches matching <pattern> onto <base branch>"
     exit 1;
 fi
 
-pattern=refs/heads/$2
+# Abort if there are uncommitted changes
+if ! git diff-index --quiet HEAD --; then
+    echo "You have uncommitted changes."
+    exit 1
+fi
+
+# Abort if base branch does not exist
+if ! git show-ref --verify --quiet "refs/heads/$1"; then
+    echo "Branch '$1' does not exist."
+    exit 1
+fi
+
+pattern="refs/heads/$2"
 branches=$(git for-each-ref --format='%(refname:short)' "$pattern")
+
+# Abort if there are no matching branches
+if [ -z "$branches" ]; then
+    echo "No branches match pattern '$2'."
+    exit 1
+fi
+
 for b in $branches; do
     echo
     echo "-- Rebasing $b"
     git rebase $1 $b
     rc=$?
-    if [ $rc -ne 0 ] ; then break; fi
+    if [ $rc -ne 0 ] ; then
+        echo "Rebase failed for branch $b. Aborting."
+        exit $rc
+    fi
 done
+
+git checkout "$1"

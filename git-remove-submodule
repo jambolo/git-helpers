@@ -1,7 +1,11 @@
-#!/bin/bash
+#!/usr/bin/env bash
+#
+# Removes a submodule completely.
+
+set -e  # Exit on error
 
 if [ $# -ne 1 ] && [ $# -ne 2 ]; then
-    echo "Usage: git-remove-submodule <path>"
+    echo "Usage: git-remove-submodule <path> <optional commit message>"
     echo "Removes a submodule completely."
     exit 1;
 fi
@@ -12,4 +16,23 @@ else
     COMMENT="Removed submodule $1"
 fi
 
-git submodule deinit $1 && git rm $1 && git commit -m "$COMMENT" && rm -rf .git/modules/$1
+# Check if submodule exists
+if ! git config --file .gitmodules --get-regexp "^submodule\..*\.path$" | grep -q "$1"; then
+    echo "Submodule '$1' does not exist."
+    exit 1
+fi
+
+# Remove submodule entry from .gitmodules
+git config -f .gitmodules --remove-section "submodule.$1" || true
+git add .gitmodules
+
+# Remove submodule entry from .git/config
+git config --remove-section "submodule.$1" || true
+
+# Remove the submodule files and commit the changes
+git submodule deinit "$1"
+git rm -r "$1"
+git commit -m "$COMMENT"
+rm -rf ".git/modules/$1"
+
+echo "Submodule '$1' removed successfully."

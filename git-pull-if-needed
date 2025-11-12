@@ -1,21 +1,29 @@
-#!/bin/bash
+#!/usr/bin/env bash
+#
+# Pulls the current branch and updates submodules if the local repo is behind and hasn't diverged
 
 if [ $# -ne 0 ]; then
     echo "Usage: git-pull-if-needed"
-    echo "The remote branch is pulled and the submodules are updated if the local repo is behind and hasn't diverged"
+    echo "The current branch is pulled and the submodules are updated if the local repo is behind and hasn't diverged"
     exit 1;
+fi
+
+# Check if upstream exists
+if ! git rev-parse --abbrev-ref --symbolic-full-name @{u} >/dev/null 2>&1; then
+    echo "Error: No upstream branch set for current branch."
+    exit 2
 fi
 
 LOCAL=$(git rev-parse @)
 REMOTE=$(git rev-parse @{u})
 BASE=$(git merge-base @ @{u})
 
-if [ $LOCAL = $REMOTE ]; then
+if [ "$LOCAL" = "$REMOTE" ]; then
     echo "Already up-to-date."
-elif [ $LOCAL = $BASE ]; then
+elif [ "$LOCAL" = "$BASE" ]; then
     git pull
     git submodule update --init --recursive
-elif [ $REMOTE = $BASE ]; then
+elif [ "$REMOTE" = "$BASE" ]; then
     echo "Need to push"
 else
     echo "Diverged"

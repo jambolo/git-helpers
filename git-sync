@@ -1,4 +1,8 @@
-#!/bin/bash
+#!/usr/bin/env bash
+#
+# Unifies two branches such that commits in branch 1 are followed by commits in branch 2
+
+set -e # Exit on error
 
 if [ $# -ne 2 ]; then
     echo "Usage: git-sync <branch1> <branch2>"
@@ -6,5 +10,23 @@ if [ $# -ne 2 ]; then
     exit 1;
 fi
 
+# Ensure both branches exist
+if ! git rev-parse --verify "$1" >/dev/null 2>&1; then
+    echo "Error: Branch '$1' does not exist."
+    exit 1
+fi
 
-echo "First, rebasing $2 onto $1" && git rebase $1 $2 && echo "Now, fast-forwarding $1 to $2" && git checkout $1 && git merge $2
+if ! git rev-parse --verify "$2" >/dev/null 2>&1; then
+    echo "Error: Branch '$2' does not exist."
+    exit 1
+fi
+
+
+echo "First, rebasing $2 onto $1"
+git rebase "$1" "$2"
+
+echo "Now, fast-forwarding $1 to $2"
+git checkout "$1"
+git merge "$2" --ff-only
+
+echo "Done."

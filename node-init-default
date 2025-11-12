@@ -1,9 +1,13 @@
-#!/bin/bash
+#!/usr/bin/env bash
+#
+# This bash script automates the creation of a new node.js project with NPM.
+
+set -e  # Exit if error occurs
 
 if [ $# -ne 0 ]; then
     echo "Usage: node-init-default"
-    echo "Initializes a brand new node project"
-    exit 1;
+    echo "Initializes a new node project with NPM."
+    exit 1
 fi
 
 echo "*** Creating git repo ..."
@@ -24,12 +28,14 @@ git commit -m "Added MIT License"
 
 echo
 echo "*** Creating default README.md ..."
-echo "# $(basename "$PWD")" >> README.md
+cat > README.md << EOF
+# $(basename "$PWD")
+EOF
 git add --all
 git commit -m "Added default README.md"
 
 echo
-echo "*** Initializing node project ..."
+echo "*** Initializing node.js project ..."
 npm init -y
 npm install
 git add --all

@@ -1,10 +1,43 @@
-#!/bin/bash
+#!/usr/bin/env bash
+#
+# Creates a temporary branch named wip/${user}/${timestamp} from uncommitted changes and pushes it to origin so that
+# it can be referenced elsewhere.
+
+set -e  # Exit on error
 
 if [ $# -ne 0 ]; then
     echo "Usage: git-push-wip"
-    echo "Creates a branch named WIP, commits uncommitted changes to it, and pushes to origin."
+    echo "Creates a branch, commits any changes to it, and pushes to origin."
     exit 1;
 fi
 
-git status && echo "Creating wip branch ..." && git checkout -b wip && echo "Committing changes ..." && git add . && git commit -m "WIP" && echo "Pushing to origin ..." && git push --set-upstream origin wip
+git status
 
+# Get current branch name
+current=$(git rev-parse --abbrev-ref HEAD)
+
+# Generate unique WIP branch name
+user=$(git config user.name 2>/dev/null || echo "$USERNAME")
+timestamp=$(date +"%Y%m%d-%H%M%S")
+wip="wip/${user}/${timestamp}"
+
+# Check for uncommitted changes
+if git diff-index --quiet HEAD --; then
+    echo "No changes to commit."
+    exit 0
+fi
+
+echo "Creating WIP branch: $wip ..."
+git checkout -b "$wip"
+
+echo "Committing changes ..."
+git add .
+git commit -m "WIP"
+
+echo "Pushing to origin ..."
+git push --set-upstream origin "$wip"
+
+# Switch back to original branch
+git checkout "$current"
+
+echo "Done. WIP branch '$wip' pushed to origin."

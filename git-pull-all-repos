@@ -1,22 +1,13 @@
-#!/bin/bash
-
-## For each repo in all subdirectories, this pulls all branches from all remotes
+#!/usr/bin/env bash
+#
+# For all git repositories in any subdirectories, pulls all branches and tags from all remotes.
 
 # Find git repos and loop over them:
-for repo in `find . -type d -name ".git"`
-do
-    # cd to the dir that contains .git/:
-    dir=`echo ${repo} | sed -e 's/\/.git/\//'`
-    cd ${dir}
-    echo ${dir}
+find . -type d -name ".git" | while read -r repo; do
+    dir="${repo%/.git}"
+    echo "Updating repository: $dir"
 
-    # Fetch all branches from all remotes
-    git fetch --all --tags --prune
-
-    # Pull all tracking branches from all remotes
-    git pull --all
-
-    # cd back
+    git -C "$dir" fetch --all --tags --prune || echo "Fetch failed in $dir"
+    git -C "$dir" pull --all || echo "Pull failed in $dir"
     echo
-    cd - &> /dev/null
 done

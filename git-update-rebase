@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+#
+# Pulls <branch> and rebases the current branch on top of it.
+# This is useful for keeping a feature or topic branch up to date with the base branch.
+
+set -e  # Exit on error
+
+if [ $# -ne 1 ]; then
+    echo "Usage: git-update-rebase <base branch>"
+    echo "Pulls <base branch> and rebases the current branch on top of it"
+    exit 1;
+fi
+
+base=$1
+current=$(git symbolic-ref --short HEAD)
+
+# Check if base branch exists locally or remotely
+if ! git show-ref --verify --quiet "refs/heads/$base"; then
+    if git show-ref --verify --quiet "refs/remotes/origin/$base"; then
+        git fetch origin "$base:$base"
+    else
+        echo "Error: Branch '$base' does not exist locally or on remote."
+        exit 2
+    fi
+fi
+
+# Save current branch in case of error
+trap 'git checkout "$current"' ERR
+
+# Update base branch from remote
+git checkout "$base"
+git fetch origin "$base"
+git reset --hard "origin/$base"
+
+# Switch back to original branch
+git checkout "$current"
+
+# Rebase current branch onto base
+git rebase "$base"
+echo "Rebased '$current' on top of '$base' successfully."

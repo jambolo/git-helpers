@@ -1,9 +1,23 @@
-#!/bin/bash
+#!/usr/bin/env bash
+#
+# Compares the differences between two git branches using git difftool in directory diff mode.
 
+# Validate arguments
 if [ $# -ne 2 ]; then
     echo "Usage: git-diff-branches <branch> <branch>"
     echo "Displays the differences between two branches using difftool"
     exit 1;
 fi
 
-git difftool --dir-diff $1..$2
+# Ensure that the branches exist
+if ! git rev-parse --verify "$1" >/dev/null 2>&1; then
+    echo "Error: Branch '$1' does not exist."
+    exit 2
+fi
+if ! git rev-parse --verify "$2" >/dev/null 2>&1; then
+    echo "Error: Branch '$2' does not exist."
+    exit 2
+fi
+
+# Diff the two branches
+git difftool --dir-diff "$1".."$2"

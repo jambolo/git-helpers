@@ -1,4 +1,5 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
 
 # Goes into each subdirectory with a Git repo and does a pull and a submodule update
 

@@ -1,4 +1,10 @@
 #!/usr/bin/env bash
+#
+# This bash script automates the creation of a new C++ CMake project with git version control.
+#
+# The script expects template files to exist in the parent directory (../!LIBRARY_TEMPLATE_CMakeLists.txt.in, etc.).
+
+set -e  # Exit immediately if a command exits with a non-zero status
 
 # Default values
 library=false
@@ -89,6 +95,10 @@ if [ -z "$EXE_NAME" ]; then
 fi
 
 echo "*** Creating C++ CMake project ..."
+if [ -d "$PROJECT_NAME" ]; then
+    echo "Error: Directory '$PROJECT_NAME' already exists"
+    exit 1
+fi
 mkdir "$PROJECT_NAME"
 cd "$PROJECT_NAME"
 
@@ -118,7 +128,7 @@ echo "*** Creating MIT license ..."
 cat > LICENSE << EOF
 MIT License
 
-Copyright (c) $(date +%Y)
+Copyright (c) $(date +%Y) John J. Bolton
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -150,10 +160,18 @@ git commit -m "Added default README.md"
 
 echo "*** Creating default CMakeLists.txt ..."
 if [ "$library" = true ]; then
+    if [ ! -f "../!LIBRARY_TEMPLATE_CMakeLists.txt.in" ]; then
+        echo "Error: Template file not found: ../!LIBRARY_TEMPLATE_CMakeLists.txt.in"
+        exit 1
+    fi
     sed -e "s/@PROJECT_NAME@/$PROJECT_NAME/g" \
         -e "s/@PROJECT_DESCRIPTION@/$PROJECT_DESCRIPTION/g" \
         ../!LIBRARY_TEMPLATE_CMakeLists.txt.in > CMakeLists.txt
 else
+    if [ ! -f "../!EXE_TEMPLATE_CMakeLists.txt.in" ]; then
+        echo "Error: Template file not found: ../!EXE_TEMPLATE_CMakeLists.txt.in"
+        exit 1
+    fi
     sed -e "s/@PROJECT_NAME@/$PROJECT_NAME/g" \
         -e "s/@EXECUTABLE_NAME@/$EXE_NAME/g" \
         -e "s/@PROJECT_DESCRIPTION@/$PROJECT_DESCRIPTION/g" \
@@ -162,8 +180,14 @@ fi
 git add CMakeLists.txt
 git commit -m "Added default CMakeLists.txt"
 
+
 echo "*** Creating miscellaneous and placeholder files ..."
+# Note placeholder source files are not committed here; left for user to replace with real code
 if [ "$library" = true ]; then
+    if [ ! -f "../!LIBRARY_TEMPLATE_Doxyfile.in" ]; then
+        echo "Error: Template file not found: ../!LIBRARY_TEMPLATE_Doxyfile.in"
+        exit 1
+    fi
     mkdir -p include/${PROJECT_NAME}
     touch include/${PROJECT_NAME}/${PROJECT_NAME}.h ${PROJECT_NAME}.cpp
     cp ../!LIBRARY_TEMPLATE_Doxyfile.in Doxyfile.in

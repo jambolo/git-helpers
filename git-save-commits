@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+#
+# Resets the current branch to the specified commit and moves the removed commits to a new branch.
+
+set -e # Exit on error
+
+if [ $# -eq 0 ]; then
+    echo "Usage: git-save-commits <commit> [new branch name]"
+    echo "Resets the current branch to the specified commit and moves the succeeding commits to a new branch."
+    exit 1;
+fi
+
+# Abort if there are uncommitted changes
+if ! git diff-index --quiet HEAD --; then
+    echo "You have uncommitted changes."
+    exit 1
+fi
+
+commit=$1
+if ! git rev-parse --verify "$commit" >/dev/null 2>&1; then
+    echo "Error: Commit '$commit' does not exist."
+    exit 1
+fi
+
+if [ $# -ge 2 ]; then
+    branch=$2
+else
+    branch="wip/$(git rev-parse --abbrev-ref HEAD)-saved-$(date +%Y%m%d-%H%M%S)"
+fi
+
+if git show-ref --verify --quiet "refs/heads/$branch"; then
+    echo "Error: Branch '$branch' already exists."
+    exit 1
+fi
+
+echo "Creating branch $branch from current HEAD"
+git branch "$branch"
+git reset --hard "$commit"

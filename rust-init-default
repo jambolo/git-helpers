@@ -1,8 +1,12 @@
-#!/bin/bash
+#!/usr/bin/env bash
+#
+# Initializes a new rust project in a new directory
+
+set -e  # Exit on error
 
 if [ $# -ne 1 ]; then
     echo "Usage: rust-init-default <project-name>"
-    echo "Initializes a brand new rust project in a new directory"
+    echo "Initializes a new rust project in a new directory"
     exit 1;
 fi
 
@@ -41,7 +45,7 @@ echo "*** Creating MIT license ..."
 cat > LICENSE << EOF
 MIT License
 
-Copyright (c) $(date +%Y) 
+Copyright (c) $(date +%Y) John J. Bolton
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -67,7 +71,9 @@ git commit -m "Added MIT License"
 
 echo
 echo "*** Creating default README.md ..."
-echo "# $PROJECT_NAME" > README.md
+cat > README.md <<EOF
+# $PROJECT_NAME
+EOF
 git add README.md
 git commit -m "Added default README.md"
 

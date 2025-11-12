@@ -1,10 +1,15 @@
-#!/bin/bash
+#!/usr/bin/env bash
+#
+# Fetches updates from remotes and fast-forwards or creates all remote branches in the repo and its submodules.
 
-if [ $# -ne 0 ]; then
-    echo "Usage: git-ffwd-all"
-    echo "Fetches and fast-forwards (if possible) all branches in the repo and all its submodules"
-    exit 1;
+set -e  # Exit on error
+
+if [[ "$1" == "-h" || "$1" == "--help" ]]; then
+    echo "Usage: git-ffwd-all [remote ...]"
+    echo "Fetches and fast-forwards (if possible) all remote branches in the repo and its submodules."
+    echo "If no remotes are specified, all remotes are processed."
+    exit 0
 fi
 
-git-ffwd
-git submodule foreach git-ffwd
+git-ffwd "$@"
+git submodule foreach --recursive 'git-ffwd "$@"' -- "$@"

@@ -1,9 +1,13 @@
-#!/bin/bash
+#!/usr/bin/env bash
+#
+# This bash script automates the creation of a new node.js project with PNPM.
+
+set -e  # Exit if error occurs
 
 if [ $# -ne 0 ]; then
     echo "Usage: pnpm-init-default"
-    echo "Initializes a brand new node project"
-    exit 1;
+    echo "Initializes a brand new node.js project with PNPM"
+    exit 1
 fi
 
 echo "*** Creating git repo ..."
@@ -24,7 +28,9 @@ git commit -m "Added MIT License"
 
 echo
 echo "*** Creating default README.md ..."
-echo "# $(basename "$PWD")" >> README.md
+cat > README.md <<EOF
+# $(basename "$PWD")
+EOF
 git add --all
 git commit -m "Added default README.md"
 

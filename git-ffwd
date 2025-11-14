@@ -32,6 +32,17 @@ echo "$REMOTES" | while read REMOTE; do
     continue
   fi
 
+  # First, ensure all remote branches have local tracking branches (but not symbolic references like HEAD)
+  REMOTE_BRANCHES=$(git branch -r | grep -v '\->' | sed "s/^ *$REMOTE\///")
+  LOCAL_BRANCHES=$(git branch --format='%(refname:short)')
+  echo "$REMOTE_BRANCHES" | while read RB; do
+    if [ -z "$RB" ]; then continue; fi
+    if ! echo "$LOCAL_BRANCHES" | grep -qx "$RB"; then
+      echo "Creating local tracking branch '$RB' for remote branch '$REMOTE/$RB'"
+      git branch --track "$RB" "$REMOTE/$RB" 2>/dev/null
+    fi
+  done
+
   # Process each remote-local branch pair for the current remote
   BRANCH_INFO=$(git remote show "$REMOTE" -n | awk '/merges with remote/{print $5" "$1}')
   echo "$BRANCH_INFO" | while read line; do
@@ -47,15 +58,19 @@ echo "$REMOTES" | while read REMOTE; do
     if [ $NAHEAD -gt 0 ]; then
       if [ $NBEHIND -gt 0 ]; then
         echo " branch $LB is $NBEHIND commit(s) behind and $NAHEAD commit(s) ahead of $REMOTE/$RB. could not be fast-forwarded"
+      else
+        echo " branch $LB is $NAHEAD commit(s) ahead of $REMOTE/$RB."
       fi
     elif [ $NBEHIND -gt 0 ]; then
       if [ "$LB" = "$CLB" ]; then
-        echo " branch $LB was $NBEHIND commit(s) behind of $REMOTE/$RB. fast-forward merge"
+        echo " branch $LB was $NBEHIND commit(s) behind of $REMOTE/$RB. fast-forward merging"
         git merge -q "$ARB"
       else
         echo " branch $LB was $NBEHIND commit(s) behind of $REMOTE/$RB. resetting local branch to remote"
         git branch -f "$LB" "$ARB" >/dev/null
       fi
+    else
+      echo " branch $LB is up to date with $REMOTE/$RB."
     fi
   done
 done

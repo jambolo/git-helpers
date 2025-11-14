@@ -38,7 +38,7 @@ echo "$REMOTES" | while read REMOTE; do
   echo "$REMOTE_BRANCHES" | while read RB; do
     if [ -z "$RB" ]; then continue; fi
     if ! echo "$LOCAL_BRANCHES" | grep -qx "$RB"; then
-      echo "Creating local tracking branch '$RB' for remote branch '$REMOTE/$RB'"
+      echo "- creating local tracking branch '$RB' for remote branch '$REMOTE/$RB'"
       git branch --track "$RB" "$REMOTE/$RB" 2>/dev/null
     fi
   done
@@ -57,20 +57,20 @@ echo "$REMOTES" | while read REMOTE; do
     NBEHIND=$(( $(git rev-list --count "$ALB".."$ARB" 2>/dev/null) +0 ))
     if [ $NAHEAD -gt 0 ]; then
       if [ $NBEHIND -gt 0 ]; then
-        echo " branch $LB is $NBEHIND commit(s) behind and $NAHEAD commit(s) ahead of $REMOTE/$RB. could not be fast-forwarded"
+        echo "- branch $LB is $NBEHIND commit(s) behind and $NAHEAD commit(s) ahead of $REMOTE/$RB. could not be fast-forwarded"
       else
-        echo " branch $LB is $NAHEAD commit(s) ahead of $REMOTE/$RB."
+        echo "- branch $LB is $NAHEAD commit(s) ahead of $REMOTE/$RB."
       fi
     elif [ $NBEHIND -gt 0 ]; then
       if [ "$LB" = "$CLB" ]; then
-        echo " branch $LB was $NBEHIND commit(s) behind of $REMOTE/$RB. fast-forward merging"
+        echo "- branch $LB was $NBEHIND commit(s) behind of $REMOTE/$RB. fast-forward merging"
         git merge -q "$ARB"
       else
-        echo " branch $LB was $NBEHIND commit(s) behind of $REMOTE/$RB. resetting local branch to remote"
+        echo "- branch $LB was $NBEHIND commit(s) behind of $REMOTE/$RB. resetting local branch to remote"
         git branch -f "$LB" "$ARB" >/dev/null
       fi
     else
-      echo " branch $LB is up to date with $REMOTE/$RB."
+      echo "- branch $LB is up to date with $REMOTE/$RB."
     fi
   done
 done

@@ -1,10 +1,10 @@
-cmake_minimum_required(VERSION 3.21)
+cmake_minimum_required(VERSION 3.23)
 
 find_package(GTest REQUIRED)
 include(GoogleTest)
 
 # Function to create test executables
-function(add_test test_name source_file)
+function(add_test_executable test_name source_file)
     add_executable(${test_name} ${source_file})
     set_target_properties(${test_name} PROPERTIES
         CXX_STANDARD 17
@@ -39,5 +39,5 @@ message(STATUS "Building tests for ${PROJECT_NAME}")
 
 foreach(FILE ${SOURCES})
     get_filename_component(TEST ${FILE} NAME_WE)
-    add_test("${PROJECT_NAME}_${TEST}" ${FILE})
+    add_test_executable("${PROJECT_NAME}_${TEST}" ${FILE})
 endforeach()

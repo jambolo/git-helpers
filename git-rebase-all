@@ -2,6 +2,8 @@
 #
 # Rebases all branches whose name matches a given pattern onto a specified branch
 
+set -e  # Exit on error
+
 if [ $# -ne 2 ]; then
     echo "Usage: git-rebase-all <base branch> <pattern>"
     echo "Rebases all branches matching <pattern> onto <base branch>"
@@ -32,7 +34,7 @@ fi
 for b in $branches; do
     echo
     echo "-- Rebasing $b"
-    git rebase $1 $b
+    git rebase "$1" "$b"
     rc=$?
     if [ $rc -ne 0 ] ; then
         echo "Rebase failed for branch $b. Aborting."

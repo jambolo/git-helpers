@@ -174,7 +174,7 @@ endif()
 # Testing                                                               #
 #########################################################################
 
-if(${PROJECT_NAME}_BUILD_TESTS)
+if(${PROJECT_NAME}_BUILD_TESTING)
     include(GoogleTest)
     include(CTest)
     enable_testing()
@@ -187,7 +187,7 @@ if(${PROJECT_NAME}_BUILD_TESTS)
     endif()
 else()
     if(IS_TOP_LEVEL_PROJECT)
-        message(STATUS "${PROJECT_NAME}: Testing is disabled. Set ${PROJECT_NAME}_BUILD_TESTS to ON to enable.")
+        message(STATUS "${PROJECT_NAME}: Testing is disabled. Set ${PROJECT_NAME}_BUILD_TESTING to ON to enable.")
     endif()
 endif()
 

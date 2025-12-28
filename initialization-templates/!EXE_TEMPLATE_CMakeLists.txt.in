@@ -23,7 +23,7 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
     set(IS_TOP_LEVEL_PROJECT ON)
 endif()
 
-cmake_dependent_option(@PROJECT_NAME@_BUILD_TESTS
+cmake_dependent_option(@PROJECT_NAME@_BUILD_TESTING
     "Build and run tests"
     OFF
     "IS_TOP_LEVEL_PROJECT"
@@ -137,11 +137,11 @@ set_target_properties(@EXECUTABLE_NAME@ PROPERTIES
 # Testing                                                               #
 #########################################################################
 
-if(@PROJECT_NAME@_BUILD_TESTS)
+if(@PROJECT_NAME@_BUILD_TESTING)
     include(CTest)
     enable_testing()
     message(STATUS "${PROJECT_NAME}: Testing is enabled.")
     add_subdirectory(test)
 else()
-    message(STATUS "Turn on @PROJECT_NAME@_BUILD_TESTS to build tests.")
+    message(STATUS "Turn on @PROJECT_NAME@_BUILD_TESTING to build tests.")
 endif()

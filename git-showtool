@@ -2,6 +2,8 @@
 #
 # Shows the differences between a commit and its predecessor using difftool
 
+set -e  # Exit on error
+
 if [ $# -ne 1 ]; then
     echo "Usage: git-showtool <commit>"
     echo "Shows the differences between a commit and its predecessor using difftool"

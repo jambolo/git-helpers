@@ -2,6 +2,8 @@
 #
 # Fetches updates from remotes and fast-forwards or creates all remote branches.
 
+set -e  # Exit on error
+
 if [[ "$1" == "-h" || "$1" == "--help" ]]; then
     echo "Usage: git-ffwd [remote ...]"
     echo "Fetches and fast-forwards (if possible) all remote branches in the repo."
@@ -10,7 +12,7 @@ if [[ "$1" == "-h" || "$1" == "--help" ]]; then
 fi
 
 # Determine the remotes to process
-REMOTES="$@"
+REMOTES="$*"
 if [ -z "$REMOTES" ]; then
   REMOTES=$(git remote)
 fi

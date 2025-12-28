@@ -2,7 +2,7 @@
 #
 # This bash script automates the creation of a new node.js project with NPM.
 
-set -e  # Exit if error occurs
+set -e  # Exit on error
 
 if [ $# -ne 0 ]; then
     echo "Usage: node-init-default"

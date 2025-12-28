@@ -1,4 +1,8 @@
-#!/bin/bash
+#!/usr/bin/env bash
+#
+# Stages and commits a submodule update with a descriptive commit message.
+
+set -e  # Exit on error
 
 # Get subproject name from command line
 if [ -z "$1" ]; then

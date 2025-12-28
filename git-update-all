@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
+#
+# Fetches and fast-forwards all branches and submodules, and then updates all submodules.
 
+set -e  # Exit on error
 
 if [ $# -ne 0 ]; then
     echo "Usage: git-update-all"

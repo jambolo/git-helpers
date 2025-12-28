@@ -12,6 +12,16 @@ fi
 
 PROJECT_NAME="$1"
 
+if [ -d "$PROJECT_NAME" ]; then
+    echo "Error: Directory '$PROJECT_NAME' already exists"
+    exit 1
+fi
+
+if ! [[ "$PROJECT_NAME" =~ ^[a-z_][a-z0-9_]*$ ]]; then
+    echo "Error: Project name must start with a letter or underscore and contain only lowercase letters, numbers, and underscores"
+    exit 1
+fi
+
 echo "*** Creating rust project with cargo new ..."
 cargo new "$PROJECT_NAME"
 cd "$PROJECT_NAME"

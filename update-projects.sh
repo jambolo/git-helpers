@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
+#
+# Goes into each subdirectory with a Git repo and does a pull and a submodule update.
 
-
-# Goes into each subdirectory with a Git repo and does a pull and a submodule update
+set -e  # Exit on error
 
 for d in *; do
         if [ -d "$d" ] && [ "$d" != "3rdParty" ]; then

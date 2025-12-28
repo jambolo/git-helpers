@@ -2,6 +2,8 @@
 #
 # Compares the differences between two git branches using git difftool in directory diff mode.
 
+set -e  # Exit on error
+
 # Validate arguments
 if [ $# -ne 2 ]; then
     echo "Usage: git-diff-branches <branch> <branch>"

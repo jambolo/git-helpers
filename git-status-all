@@ -2,17 +2,19 @@
 #
 # Check the status of all git repositories in subdirectories.
 
+set -e  # Exit on error
+
 # Initialize counters:
-let count_all=0
-let count_changed=0
-let count_unchanged=0
+count_all=0
+count_changed=0
+count_unchanged=0
 
 # Set to 1 for more verbose output:
-let verbose=0
+verbose=0
 
 # Parse verbose flag
 if [[ "$1" == "-v" || "$1" == "--verbose" ]]; then
-    let verbose=1
+    verbose=1
 fi
 
 # Help option
@@ -26,7 +28,7 @@ fi
 
 # Find git repos and loop over them:
 while read -d $'\0' repo; do
-    let count_all=${count_all}+1
+    ((count_all++)) || true
 
     dir=$(echo "${repo}" | sed -e 's/\/.git$//')
     pushd "${dir}" > /dev/null
@@ -36,11 +38,11 @@ while read -d $'\0' repo; do
         echo -e "\n\n \033[4;31m ${dir}\033[0m"
         git branch -vvra
         git status -s | grep -v '??'
-        let count_changed=${count_changed}+1
+        ((count_changed++)) || true
         echo
     else
         if [ ${verbose} -ne 0 ]; then echo "Nothing to do for ${dir}"; fi
-        let count_unchanged=${count_unchanged}+1
+        ((count_unchanged++)) || true
     fi
 
     popd > /dev/null

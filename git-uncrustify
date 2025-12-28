@@ -2,6 +2,8 @@
 #
 # Runs uncrustify on all modified and added c/cpp/h files in the working tree.
 
+set -e  # Exit on error
+
 if [ $# -ne 0 ]; then
     echo "Usage: git-uncrustify"
     echo "Runs uncrustify on all modified and added c/cpp/h files in the working tree."

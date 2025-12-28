@@ -160,16 +160,16 @@ git commit -m "Added default README.md"
 
 echo "*** Creating default CMakeLists.txt ..."
 if [ "$library" = true ]; then
-    if [ ! -f "../!LIBRARY_TEMPLATE_CMakeLists.txt.in" ]; then
-        echo "Error: Template file not found: ../!LIBRARY_TEMPLATE_CMakeLists.txt.in"
+    if [ ! -f '../!LIBRARY_TEMPLATE_CMakeLists.txt.in' ]; then
+        echo 'Error: Template file not found: ../!LIBRARY_TEMPLATE_CMakeLists.txt.in'
         exit 1
     fi
     sed -e "s/@PROJECT_NAME@/$PROJECT_NAME/g" \
         -e "s/@PROJECT_DESCRIPTION@/$PROJECT_DESCRIPTION/g" \
         ../!LIBRARY_TEMPLATE_CMakeLists.txt.in > CMakeLists.txt
 else
-    if [ ! -f "../!EXE_TEMPLATE_CMakeLists.txt.in" ]; then
-        echo "Error: Template file not found: ../!EXE_TEMPLATE_CMakeLists.txt.in"
+    if [ ! -f '../!EXE_TEMPLATE_CMakeLists.txt.in' ]; then
+        echo 'Error: Template file not found: ../!EXE_TEMPLATE_CMakeLists.txt.in'
         exit 1
     fi
     sed -e "s/@PROJECT_NAME@/$PROJECT_NAME/g" \
@@ -184,8 +184,8 @@ git commit -m "Added default CMakeLists.txt"
 echo "*** Creating miscellaneous and placeholder files ..."
 # Note placeholder source files are not committed here; left for user to replace with real code
 if [ "$library" = true ]; then
-    if [ ! -f "../!LIBRARY_TEMPLATE_Doxyfile.in" ]; then
-        echo "Error: Template file not found: ../!LIBRARY_TEMPLATE_Doxyfile.in"
+    if [ ! -f '../!LIBRARY_TEMPLATE_Doxyfile.in' ]; then
+        echo 'Error: Template file not found: ../!LIBRARY_TEMPLATE_Doxyfile.in'
         exit 1
     fi
     mkdir -p include/${PROJECT_NAME}

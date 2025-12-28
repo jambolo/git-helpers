@@ -2,6 +2,8 @@
 #
 # Pulls the current branch and updates submodules if the local repo is behind and hasn't diverged
 
+set -e  # Exit on error
+
 if [ $# -ne 0 ]; then
     echo "Usage: git-pull-if-needed"
     echo "The current branch is pulled and the submodules are updated if the local repo is behind and hasn't diverged"

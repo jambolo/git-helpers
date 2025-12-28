@@ -2,13 +2,16 @@
 #
 # Runs git difftool in parallel on all files that differ between the working directory and HEAD
 
+set -e  # Exit on error
+
 if [ $# -gt 1 ]; then
     echo "Usage: git-difftool-all [path]"
     echo "Displays the differences for <path> between the working directory and HEAD using difftool"
     exit 1;
 fi
 
-files=$(git diff --name-only "$1")
+path="${1:-.}"
+files=$(git diff --name-only "$path")
 if [ -z "$files" ]; then
     echo "No differences found."
     exit 0

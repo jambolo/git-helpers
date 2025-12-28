@@ -2,7 +2,7 @@
 #
 # This bash script automates the creation of a new julia project.
 
-set -e
+set -e  # Exit on error
 
 if [ -z "$1" ]; then
     echo "Usage: julia-init-default <project name>"

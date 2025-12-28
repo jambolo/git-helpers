@@ -2,6 +2,8 @@
 #
 # For all git repositories in any subdirectories, pulls all branches and tags from all remotes.
 
+set -e  # Exit on error
+
 # Find git repos and loop over them:
 find . -type d -name ".git" | while read -r repo; do
     dir="${repo%/.git}"

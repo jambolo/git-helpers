@@ -1,0 +1,31 @@
+#!/bin/bash
+
+# Get subproject name from command line
+if [ -z "$1" ]; then
+  echo "Usage: $0 <subproject-name>"
+  exit 1
+fi
+
+subproject="$1"
+
+# Check if subproject exists in .gitmodules
+if ! grep -q "path = $subproject" .gitmodules 2>/dev/null; then
+  echo "Error: '$subproject' is not a subproject"
+  exit 1
+fi
+
+# Get short hash of subproject HEAD
+cd "$subproject" || exit 1
+short_hash=$(git rev-parse --short HEAD)
+cd - > /dev/null || exit 1
+
+# Stage the subproject
+git add "$subproject"
+
+# Check if subproject has been modified
+if ! git diff --cached --quiet "$subproject"; then
+  git commit -m "Updated subproject $subproject to $short_hash"
+else
+  echo "Error: subproject '$subproject' has not been modified"
+  exit 1
+fi

@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 #
-# This bash script automates the creation of a new node.js project with PNPM.
+# This bash script automates the creation of a new TypeScript node.js project with PNPM.
 
 set -e  # Exit on error
 
 if [ $# -ne 0 ]; then
-    echo "Usage: pnpm-init-default"
-    echo "Initializes a brand new node.js project with PNPM"
+    echo "Usage: pnpm-init-typescript"
+    echo "Initializes a brand new TypeScript node.js project with PNPM"
     exit 1
 fi
 
@@ -18,6 +18,7 @@ echo
 echo "*** Creating .gitignore ..."
 npx gitignore node
 cat >> .gitignore << 'EOF'
+dist/
 
 # Claude AI
 .claude/
@@ -26,7 +27,7 @@ cat >> .gitignore << 'EOF'
 .vscode/
 EOF
 git add --all
-git commit -m "Added node.js default .gitignore"
+git commit -m "Added TypeScript default .gitignore"
 
 echo
 echo "*** Creating MIT license ..."
@@ -53,7 +54,7 @@ echo
 echo "*** Creating Github CI workflow ..."
 mkdir -p .github/workflows
 cat > .github/workflows/ci.yml << 'EOF'
-name: Node.js Validation with pnpm
+name: Typescript Validation with pnpm
 
 on:
   push:
@@ -97,3 +98,57 @@ jobs:
 EOF
 git add --all
 git commit -m "Added Github CI workflow"
+
+echo
+echo "*** Installing TypeScript dependencies ..."
+pnpm add --save-dev typescript @types/node tsx vitest
+
+echo
+echo "*** Creating tsconfig.json ..."
+cat > tsconfig.json << 'EOF'
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "commonjs",
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
+}
+EOF
+
+echo
+echo "*** Creating project structure ..."
+mkdir -p src/lib  # git does not track empty directories; add files here as needed
+
+echo
+echo "*** Updating package.json scripts ..."
+pnpm pkg set scripts.build="tsc"
+pnpm pkg set scripts.test="vitest"
+pnpm pkg set scripts.test:run="vitest --run"
+
+echo
+echo "*** Creating .vscode/launch.json ..."
+mkdir -p .vscode
+cat > .vscode/launch.json << 'EOF'
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug current file",
+      "runtimeExecutable": "tsx",
+      "runtimeArgs": ["${file}"],
+      "skipFiles": ["<node_internals>/**"]
+    }
+  ]
+}
+EOF
+
+git add --all
+git commit -m "Added TypeScript configuration"

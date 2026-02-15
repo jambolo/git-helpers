@@ -1,0 +1,105 @@
+#!/usr/bin/env bash
+#
+# This bash script automates the creation of a new TypeScript node.js project with NPM.
+
+set -e  # Exit on error
+
+if [ $# -ne 0 ]; then
+    echo "Usage: node-init-typescript"
+    echo "Initializes a new TypeScript Node.js project."
+    exit 1
+fi
+
+echo "*** Creating git repo ..."
+git init
+git commit --allow-empty -m "New repo"
+
+echo
+echo "*** Creating .gitignore ..."
+npx gitignore node
+cat >> .gitignore << 'EOF'
+dist/
+
+# Claude AI
+.claude/
+
+# VS Code
+.vscode/
+EOF
+git add --all
+git commit -m "Added TypeScript default .gitignore"
+
+echo
+echo "*** Creating MIT license ..."
+npx license MIT
+git add --all
+git commit -m "Added MIT License"
+
+echo
+echo "*** Creating default README.md ..."
+cat > README.md << EOF
+# $(basename "$PWD")
+EOF
+git add --all
+git commit -m "Added default README.md"
+
+echo
+echo "*** Initializing node.js project ..."
+npm init -y
+npm install
+git add --all
+git commit -m "Added default package.json and package-lock.json"
+
+echo
+echo "*** Installing TypeScript dependencies ..."
+npm install --save-dev typescript @types/node tsx vitest
+
+echo
+echo "*** Creating tsconfig.json ..."
+cat > tsconfig.json << 'EOF'
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "commonjs",
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
+}
+EOF
+
+echo
+echo "*** Creating project structure ..."
+mkdir -p src/lib  # git does not track empty directories; add files here as needed
+
+echo
+echo "*** Updating package.json scripts ..."
+npm pkg set scripts.build="tsc"
+npm pkg set scripts.test="vitest"
+npm pkg set scripts.test:run="vitest --run"
+
+echo
+echo "*** Creating .vscode/launch.json ..."
+mkdir -p .vscode
+cat > .vscode/launch.json << 'EOF'
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug current file",
+      "runtimeExecutable": "tsx",
+      "runtimeArgs": ["${file}"],
+      "skipFiles": ["<node_internals>/**"]
+    }
+  ]
+}
+EOF
+
+git add --all
+git commit -m "Added TypeScript configuration"

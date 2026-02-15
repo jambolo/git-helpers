@@ -88,9 +88,17 @@ Sets up a Julia project named _project_ in a subfolder named _project_ and commi
 
 Sets up a node.js NPM project named _project_ in a subfolder named _project_ and commits it to a new git repo.
 
+### node-init-typescript
+
+Sets up a TypeScript node.js project with NPM in the current directory and commits it to a new git repo. Includes TypeScript, tsx, vitest, and VS Code debug configuration.
+
 ### pnpm-init-default \<project\>
 
-Sets up a node.js PNPM project named _project_ in a subfolder named _project_ and commits it to a new git repo.
+Sets up a node.js PNPM project named _project_ in a subfolder named _project_ and commits it to a new git repo. Includes a GitHub CI workflow.
+
+### pnpm-init-typescript
+
+Sets up a TypeScript node.js project with PNPM in the current directory and commits it to a new git repo. Includes TypeScript, tsx, vitest, VS Code debug configuration, and a GitHub CI workflow.
 
 ### rust-init-default \<project\>
 
@@ -130,9 +138,9 @@ Example NPM configuration file with settings for initializing new npm projects, 
 
 Git commands with options that I use a lot.
 
-* **alias grevert='git checkout --'**: Undoes any unstaged changes to the specified files
-* **alias gsquash='git rebase -i'**: Rewrites history
-* **alias gunstage='git reset HEAD'**: Unstages the specified files
-* **alias ggraph='git log --graph ...**: Draws the branch graph the way that I like it
-* **alias glog='git log ...**: Formats the log the way that I like it
-* **alias gamend='git commit --amend --no-edit'**: No-fuss amended commits
+- **alias grevert='git checkout --'**: Undoes any unstaged changes to the specified files
+- **alias gsquash='git rebase -i'**: Rewrites history
+- **alias gunstage='git reset HEAD'**: Unstages the specified files
+- **alias ggraph='git log --graph ...**: Draws the branch graph the way that I like it
+- **alias glog='git log ...**: Formats the log the way that I like it
+- **alias gamend='git commit --amend --no-edit'**: No-fuss amended commits

@@ -1,0 +1,66 @@
+#!/usr/bin/env bash
+#
+# Fetches from all remotes, then checks all git repositories in subdirectories
+# recursively and reports branches that have commits not yet pushed to their upstream.
+
+set -e  # Exit on error
+
+# Initialize counters:
+count_all=0
+count_unpushed=0
+count_clean=0
+
+# Set to 1 for more verbose output:
+verbose=0
+
+# Parse verbose flag
+if [[ "$1" == "-v" || "$1" == "--verbose" ]]; then
+    verbose=1
+fi
+
+# Help option
+if [[ "$1" == "-h" || "$1" == "--help" ]]; then
+    echo "Usage: git-unpushed-all [-v|--verbose] [-h|--help]"
+    echo "Fetches all remotes, then checks all git repositories in subdirectories recursively and lists branches with unpushed commits."
+    echo "  -v, --verbose   Show repositories with nothing unpushed."
+    echo "  -h, --help      Show this help message."
+    exit 0
+fi
+
+# Find git repos and loop over them:
+while read -d $'\0' repo; do
+    ((count_all++)) || true
+
+    dir=$(echo "${repo}" | sed -e 's/\/.git$//')
+    pushd "${dir}" > /dev/null
+
+    git fetch --all --quiet || echo "Fetch failed in ${dir}"
+
+    repo_has_unpushed=0
+
+    # Check every local branch that has an upstream for commits ahead of it:
+    while read -r branch; do
+        upstream=$(git rev-parse --abbrev-ref "${branch}@{u}" 2>/dev/null) || continue
+        ahead=$(git rev-list --count "${upstream}..${branch}")
+
+        if [ "${ahead}" -gt 0 ]; then
+            if [ "${repo_has_unpushed}" -eq 0 ]; then
+                echo -e "\n\n \033[4;31m ${dir}\033[0m"
+                repo_has_unpushed=1
+            fi
+            echo " - ${branch} is ahead of ${upstream} by ${ahead} commit(s)"
+        fi
+    done < <(git for-each-ref --format='%(refname:short)' refs/heads/)
+
+    if [ "${repo_has_unpushed}" -ne 0 ]; then
+        ((count_unpushed++)) || true
+    else
+        if [ ${verbose} -ne 0 ]; then echo "Nothing unpushed for ${dir}"; fi
+        ((count_clean++)) || true
+    fi
+
+    popd > /dev/null
+done < <(find . -type d -name ".git" -print0)
+
+# Report status and exit:
+echo -e "\n\n\033[1;34m${count_all} git repositories found:\033[0m \033[1;31m${count_unpushed} have unpushed commits\033[0m, \033[1;32m${count_clean} are clean.\033[0m\n"

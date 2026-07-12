@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+#
+# For all git repositories in any subdirectories, fetches all branches and tags from all remotes.
+
+set -e  # Exit on error
+
+# Help option
+if [[ "$1" == "-h" || "$1" == "--help" ]]; then
+    echo "Usage: git-fetch-all-repos"
+    echo "Fetches all branches and tags from all remotes for every git repository found recursively in subdirectories."
+    exit 0
+fi
+
+if [ $# -ne 0 ]; then
+    echo "Usage: git-fetch-all-repos"
+    exit 1
+fi
+
+# Find git repos and loop over them:
+find . -type d -name ".git" | while read -r repo; do
+    dir="${repo%/.git}"
+    echo "Fetching repository: $dir"
+
+    git -C "$dir" fetch --all --tags --prune || echo "Fetch failed in $dir"
+    echo
+done

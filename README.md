@@ -24,6 +24,10 @@ Fetches and fast-forwards (if possible) all branches in the repo.
 
 Fetches and fast-forwards (if possible) all branches in the repo and all its submodules.
 
+### git-fetch-all-repos
+
+For all git repositories in any subdirectories, fetches all branches and tags from all remotes.
+
 ### git-pull-all-repos
 
 For all git repositories in any subdirectories, pulls all branches and tags from all remotes.
@@ -67,6 +71,10 @@ Unifies two branches such that commits in _branch1_ are followed by commits in _
 ### git-uncrustify
 
 Runs uncrustify on all modified or added c/cpp/h files in the working tree.
+
+### git-unpushed-all [-v|--verbose]
+
+Fetches from all remotes, then checks all git repositories in subdirectories recursively and reports branches that have commits not yet pushed to their upstream.
 
 ### git-update-all
 

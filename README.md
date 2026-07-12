@@ -8,6 +8,10 @@ Scripts and aliases that make git easier to use
 
 Sets up a CMake C++ project named _project_ in a subfolder named _project_ and commits it to a new git repo.
 
+### git-commit-updated-submodules
+
+Commits any submodule whose checked-out HEAD differs from the superproject's recorded commit, with a message showing the new short hash.
+
 ### git-diff-branches \<branch\> \<branch\>
 
 Displays the differences between two branches using difftool.

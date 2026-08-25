@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# version: 1.0.0
 #
 # Rebases all branches whose name matches a given pattern onto a specified branch
 

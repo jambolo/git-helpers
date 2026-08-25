@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# version: 1.0.0
 #
 # Initializes a new rust project in a new directory
 

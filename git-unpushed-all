@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# version: 1.0.0
 #
 # Fetches from all remotes, then checks all git repositories in subdirectories
 # recursively and reports branches that have commits not yet pushed to their upstream.

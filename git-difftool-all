@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# version: 1.0.0
 #
 # Runs git difftool in parallel on all files that differ between the working directory and HEAD
 

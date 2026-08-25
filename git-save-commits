@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# version: 1.0.0
 #
 # Resets the current branch to the specified commit and moves the removed commits to a new branch.
 

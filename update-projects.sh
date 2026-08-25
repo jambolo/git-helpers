@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# version: 1.0.0
 #
 # Goes into each subdirectory with a Git repo and does a pull and a submodule update.
 

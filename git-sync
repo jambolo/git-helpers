@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# version: 1.0.0
 #
 # Unifies two branches such that commits in branch 1 are followed by commits in branch 2
 

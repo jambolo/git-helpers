@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# version: 1.0.0
 #
 # Stages and commits a submodule update with a descriptive commit message.
 

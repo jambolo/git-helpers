@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# version: 1.0.0
 #
 # Pulls <branch> and rebases the current branch on top of it.
 # This is useful for keeping a feature or topic branch up to date with the base branch.

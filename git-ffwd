@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# version: 1.0.0
 #
 # Fetches updates from remotes and fast-forwards or creates all remote branches.
 

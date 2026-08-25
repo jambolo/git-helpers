@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# version: 1.0.0
 #
 # Compares the differences between two git branches using git difftool in directory diff mode.
 

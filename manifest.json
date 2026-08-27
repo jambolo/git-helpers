@@ -30,6 +30,6 @@
     { "name": "pnpm-init-default", "version": "1.0.0", "kind": "script", "path": "pnpm-init-default" },
     { "name": "pnpm-init-typescript", "version": "1.0.0", "kind": "script", "path": "pnpm-init-typescript" },
     { "name": "rust-init-default", "version": "1.0.0", "kind": "script", "path": "rust-init-default" },
-    { "name": "update-projects.sh", "version": "1.0.0", "kind": "script", "path": "update-projects.sh" }
+    { "name": "update-projects.sh", "version": "1.1.0", "kind": "script", "path": "update-projects.sh" }
   ]
 }

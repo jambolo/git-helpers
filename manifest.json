@@ -1,9 +1,8 @@
 {
   "manifestVersion": 1,
-  "updated": "2026-08-25",
+  "updated": "2026-11-10",
   "installRoot": "~/bin",
   "entries": [
-    { "name": "cpp-init-default", "version": "1.0.0", "kind": "script", "path": "cpp-init-default" },
     { "name": "git-commit-updated-submodules", "version": "1.0.0", "kind": "script", "path": "git-commit-updated-submodules" },
     { "name": "git-diff-branches", "version": "1.0.0", "kind": "script", "path": "git-diff-branches" },
     { "name": "git-difftool-all", "version": "1.0.0", "kind": "script", "path": "git-difftool-all" },
@@ -24,12 +23,6 @@
     { "name": "git-update-all", "version": "1.0.0", "kind": "script", "path": "git-update-all" },
     { "name": "git-update-rebase", "version": "1.0.0", "kind": "script", "path": "git-update-rebase" },
     { "name": "git-update-submodule", "version": "1.0.0", "kind": "script", "path": "git-update-submodule" },
-    { "name": "julia-init-default", "version": "1.0.0", "kind": "script", "path": "julia-init-default" },
-    { "name": "node-init-default", "version": "1.0.0", "kind": "script", "path": "node-init-default" },
-    { "name": "node-init-typescript", "version": "1.0.0", "kind": "script", "path": "node-init-typescript" },
-    { "name": "pnpm-init-default", "version": "1.0.0", "kind": "script", "path": "pnpm-init-default" },
-    { "name": "pnpm-init-typescript", "version": "1.0.0", "kind": "script", "path": "pnpm-init-typescript" },
-    { "name": "rust-init-default", "version": "1.0.0", "kind": "script", "path": "rust-init-default" },
     { "name": "update-projects.sh", "version": "1.1.0", "kind": "script", "path": "update-projects.sh" }
   ]
 }

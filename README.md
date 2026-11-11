@@ -4,10 +4,6 @@ Scripts and aliases that make git easier to use
 
 ## Scripts
 
-### cpp-init-default \<project\>
-
-Sets up a CMake C++ project named _project_ in a subfolder named _project_ and commits it to a new git repo.
-
 ### git-commit-updated-submodules
 
 Commits any submodule whose checked-out HEAD differs from the superproject's recorded commit, with a message showing the new short hash.
@@ -91,30 +87,6 @@ Pulls _branch_ and rebases the current branch on top of it.
 ### git-update-submodule \<subproject-name\>
 
 Stages and commits a submodule update with a descriptive commit message showing the subproject's commit hash.
-
-### julia-init-default \<project\>
-
-Sets up a Julia project named _project_ in a subfolder named _project_ and commits it to a new git repo.
-
-### node-init-default \<project\>
-
-Sets up a node.js NPM project named _project_ in a subfolder named _project_ and commits it to a new git repo.
-
-### node-init-typescript
-
-Sets up a TypeScript node.js project with NPM in the current directory and commits it to a new git repo. Includes TypeScript, tsx, vitest, and VS Code debug configuration.
-
-### pnpm-init-default \<project\>
-
-Sets up a node.js PNPM project named _project_ in a subfolder named _project_ and commits it to a new git repo. Includes a GitHub CI workflow.
-
-### pnpm-init-typescript
-
-Sets up a TypeScript node.js project with PNPM in the current directory and commits it to a new git repo. Includes TypeScript, tsx, vitest, VS Code debug configuration, and a GitHub CI workflow.
-
-### rust-init-default \<project\>
-
-Sets up a Rust project named _project_ in a subfolder named _project_ and commits it to a new git repo.
 
 ## Utility Scripts
 

@@ -1,44 +1,53 @@
 #!/usr/bin/env bash
-# version: 1.0.0
+# version: 1.1.0
 #
-# Creates a temporary branch named wip/${user}/${timestamp} from uncommitted changes and pushes it to origin so that
-# it can be referenced elsewhere.
+# Commits all uncommitted changes, including untracked files, to a new branch named wip/<user>/<timestamp>, pushes it
+# to origin, and switches back to the original branch, leaving the working tree clean.
 
 set -e  # Exit on error
 
-if [ $# -ne 0 ]; then
+usage() {
     echo "Usage: git-push-wip"
-    echo "Creates a branch, commits any changes to it, and pushes to origin."
-    exit 1;
+    echo "Commits all uncommitted changes, including untracked files, to a new branch named wip/<user>/<timestamp>,"
+    echo "pushes it to origin, and switches back to the original branch, leaving the working tree clean."
+}
+
+case "$1" in
+    -h|--help) usage; exit 0 ;;
+esac
+
+if [ $# -ne 0 ]; then
+    usage >&2
+    exit 1
 fi
 
-git status
-
-# Get current branch name
-current=$(git rev-parse --abbrev-ref HEAD)
-
-# Generate unique WIP branch name
-user=$(git config user.name 2>/dev/null || echo "$USERNAME")
-timestamp=$(date +"%Y%m%d-%H%M%S")
-wip="wip/${user}/${timestamp}"
-
-# Check for uncommitted changes
-if git diff-index --quiet HEAD --; then
-    echo "No changes to commit."
+if [ -z "$(git status --porcelain)" ]; then
+    echo "- No changes to commit."
     exit 0
 fi
 
-echo "Creating WIP branch: $wip ..."
-git checkout -b "$wip"
+# Original branch, or the commit if HEAD is detached
+original=$(git symbolic-ref -q --short HEAD || git rev-parse HEAD)
 
-echo "Committing changes ..."
-git add .
-git commit -m "WIP"
+# Branch name from user.name, with each run of characters other than letters, digits, and '_' replaced by '-'
+user=$(git config user.name || echo "${USER:-$USERNAME}")
+user=$(printf '%s' "$user" | tr -cs 'A-Za-z0-9_' '-')
+wip="wip/${user:-unknown}/$(date +%Y%m%d-%H%M%S)"
 
-echo "Pushing to origin ..."
-git push --set-upstream origin "$wip"
+echo "- Creating branch $wip"
+git checkout -q -b "$wip"
 
-# Switch back to original branch
-git checkout "$current"
+echo "- Committing changes"
+git add -A
+git commit -q --no-verify -m "WIP"
 
-echo "Done. WIP branch '$wip' pushed to origin."
+echo "- Pushing $wip to origin"
+if ! git push -q --set-upstream origin "$wip"; then
+    echo "Error: Push failed. The changes are committed on '$wip', which is still checked out." >&2
+    echo "Retry with: git push --set-upstream origin $wip" >&2
+    exit 1
+fi
+
+git checkout -q "$original"
+
+echo "- Done. Pushed $wip to origin."

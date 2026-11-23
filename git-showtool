@@ -1,14 +1,35 @@
 #!/usr/bin/env bash
-# version: 1.0.0
+# version: 1.1.0
 #
 # Shows the differences between a commit and its predecessor using difftool
 
 set -e  # Exit on error
 
-if [ $# -ne 1 ]; then
-    echo "Usage: git-showtool <commit>"
-    echo "Shows the differences between a commit and its predecessor using difftool"
-    exit 1;
+usage() {
+    echo "Usage: git-showtool [<commit>]"
+    echo "Shows the differences between <commit> (default HEAD) and its predecessor using difftool"
+}
+
+case "$1" in
+    -h|--help) usage; exit 0 ;;
+esac
+
+if [ $# -gt 1 ]; then
+    usage >&2
+    exit 1
 fi
 
-git difftool --dir-diff "$1~1..$1"
+commit=${1:-HEAD}
+if ! git rev-parse -q --verify "$commit^{commit}" > /dev/null; then
+    echo "Error: Commit '$commit' does not exist." >&2
+    exit 1
+fi
+
+# Compare a root commit against the empty tree
+if git rev-parse -q --verify "$commit^" > /dev/null; then
+    parent="$commit^"
+else
+    parent=$(git hash-object -t tree /dev/null)
+fi
+
+git difftool --dir-diff "$parent" "$commit"

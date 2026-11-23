@@ -1,79 +1,90 @@
 #!/usr/bin/env bash
-# version: 1.0.0
+# version: 1.1.0
 #
 # Fetches updates from remotes and fast-forwards or creates all remote branches.
 
 set -e  # Exit on error
 
-if [[ "$1" == "-h" || "$1" == "--help" ]]; then
-    echo "Usage: git-ffwd [remote ...]"
+usage() {
+    echo "Usage: git-ffwd [<remote> ...]"
     echo "Fetches and fast-forwards (if possible) all remote branches in the repo."
     echo "If no remotes are specified, all remotes are processed."
+}
+
+case "$1" in
+    -h|--help) usage; exit 0 ;;
+esac
+
+# Determine the remotes to process
+if [ $# -gt 0 ]; then
+    remotes=("$@")
+else
+    mapfile -t remotes < <(git remote)
+fi
+
+if [ ${#remotes[@]} -eq 0 ]; then
+    echo "No remotes found in this repository."
     exit 0
 fi
 
-# Determine the remotes to process
-REMOTES="$*"
-if [ -z "$REMOTES" ]; then
-  REMOTES=$(git remote)
-fi
-REMOTES=$(echo "$REMOTES" | xargs -n1 echo)
+current=$(git branch --show-current) # Empty if HEAD is detached
 
-# Exit if no remotes are found
-if [ -z "$REMOTES" ]; then
-  echo "No remotes found in this repository."
-  exit 0
-fi
+# Existing local branches
+declare -A local_branches=()
+while read -r lb; do
+    local_branches["$lb"]=1
+done < <(git for-each-ref --format='%(refname:lstrip=2)' refs/heads/)
 
-CLB=$(git symbolic-ref --short HEAD) # current local branch
-
-# Process each remote
-echo "$REMOTES" | while read REMOTE; do
-  git remote update "$REMOTE"
-  if [ $? -ne 0 ]; then
-    echo "Failed to update remote $REMOTE" >&2
-    continue
-  fi
-
-  # First, ensure all remote branches have local tracking branches (but not symbolic references like HEAD)
-  REMOTE_BRANCHES=$(git branch -r | grep -v '\->' | sed "s/^ *$REMOTE\///")
-  LOCAL_BRANCHES=$(git branch --format='%(refname:short)')
-  echo "$REMOTE_BRANCHES" | while read RB; do
-    if [ -z "$RB" ]; then continue; fi
-    if ! echo "$LOCAL_BRANCHES" | grep -qx "$RB"; then
-      echo "- creating local tracking branch '$RB' for remote branch '$REMOTE/$RB'"
-      git branch --track "$RB" "$REMOTE/$RB" 2>/dev/null
+for remote in "${remotes[@]}"; do
+    if ! git remote update "$remote"; then
+        echo "Error: Failed to update remote '$remote'." >&2
+        continue
     fi
-  done
 
-  # Process each remote-local branch pair for the current remote
-  BRANCH_INFO=$(git remote show "$REMOTE" -n | awk '/merges with remote/{print $5" "$1}')
-  echo "$BRANCH_INFO" | while read line; do
-    RB=$(echo "$line"|cut -f1 -d" ") # remote branch
-    ARB="refs/remotes/$REMOTE/$RB" # absolute remote branch
-    LB=$(echo "$line"|cut -f2 -d" ") # local branch
-    ALB="refs/heads/$LB" # absolute local branch
+    # Create local tracking branches for remote branches that have none (skipping symbolic refs like HEAD)
+    while IFS=: read -r rb symref; do
+        if [ -n "$symref" ] || [ -n "${local_branches["$rb"]}" ]; then
+            continue
+        fi
+        echo "- creating local tracking branch '$rb' for remote branch '$remote/$rb'"
+        if git branch --track "$rb" "refs/remotes/$remote/$rb" >/dev/null; then
+            local_branches["$rb"]=1
+        else
+            echo "Error: Failed to create local branch '$rb'." >&2
+        fi
+    done < <(git for-each-ref --format='%(refname:lstrip=3):%(symref)' "refs/remotes/$remote/")
 
-    # If the local branch is ahead, then do nothing other than note if there is a divergence
-    # Otherwise, if the local branch is behind, then fast-forward it
-    NAHEAD=$(( $(git rev-list --count "$ARB".."$ALB" 2>/dev/null) +0 ))
-    NBEHIND=$(( $(git rev-list --count "$ALB".."$ARB" 2>/dev/null) +0 ))
-    if [ $NAHEAD -gt 0 ]; then
-      if [ $NBEHIND -gt 0 ]; then
-        echo "- branch $LB is $NBEHIND commit(s) behind and $NAHEAD commit(s) ahead of $REMOTE/$RB. could not be fast-forwarded"
-      else
-        echo "- branch $LB is $NAHEAD commit(s) ahead of $REMOTE/$RB."
-      fi
-    elif [ $NBEHIND -gt 0 ]; then
-      if [ "$LB" = "$CLB" ]; then
-        echo "- branch $LB was $NBEHIND commit(s) behind of $REMOTE/$RB. fast-forward merging"
-        git merge -q "$ARB"
-      else
-        echo "- branch $LB was $NBEHIND commit(s) behind of $REMOTE/$RB. resetting local branch to remote"
-        git branch -f "$LB" "$ARB" >/dev/null
-      fi
-    else
-      echo "- branch $LB is up to date with $REMOTE/$RB."
-    fi
-  done
+    # Fast-forward each local branch that tracks a branch on this remote
+    while IFS=: read -r lb upstream_remote upstream upstream_short track; do
+        if [ "$upstream_remote" != "$remote" ] || [[ "$upstream" != refs/remotes/* ]]; then
+            continue
+        fi
+
+        ahead=0
+        behind=0
+        if [[ "$track" =~ ahead\ ([0-9]+) ]]; then ahead=${BASH_REMATCH[1]}; fi
+        if [[ "$track" =~ behind\ ([0-9]+) ]]; then behind=${BASH_REMATCH[1]}; fi
+
+        if [ "$track" = "gone" ]; then
+            echo "- branch $lb tracks $upstream_short, which no longer exists."
+        elif [ "$ahead" -gt 0 ]; then
+            if [ "$behind" -gt 0 ]; then
+                echo "- branch $lb is $behind commit(s) behind and $ahead commit(s) ahead of $upstream_short. could not be fast-forwarded"
+            else
+                echo "- branch $lb is $ahead commit(s) ahead of $upstream_short."
+            fi
+        elif [ "$behind" -gt 0 ]; then
+            if [ "$lb" = "$current" ]; then
+                echo "- branch $lb was $behind commit(s) behind $upstream_short. fast-forward merging"
+                git merge -q --ff-only "$upstream" || echo "Error: Failed to fast-forward branch '$lb'." >&2
+            else
+                echo "- branch $lb was $behind commit(s) behind $upstream_short. resetting local branch to remote"
+                git branch -f "$lb" "$upstream" >/dev/null || echo "Error: Failed to update branch '$lb'." >&2
+            fi
+        else
+            echo "- branch $lb is up to date with $upstream_short."
+        fi
+    done < <(git for-each-ref \
+        --format='%(refname:lstrip=2):%(upstream:remotename):%(upstream):%(upstream:short):%(upstream:track,nobracket)' \
+        refs/heads/)
 done

@@ -16,7 +16,7 @@
     { "name": "git-showtool", "version": "1.1.0", "kind": "script", "path": "git-showtool" },
     { "name": "git-status-all", "version": "1.0.0", "kind": "script", "path": "git-status-all" },
     { "name": "git-sync", "version": "1.1.0", "kind": "script", "path": "git-sync" },
-    { "name": "git-uncrustify", "version": "1.0.0", "kind": "script", "path": "git-uncrustify" },
+    { "name": "git-uncrustify", "version": "2.0.0", "kind": "script", "path": "git-uncrustify" },
     { "name": "git-unpushed-all", "version": "1.0.0", "kind": "script", "path": "git-unpushed-all" },
     { "name": "git-update-all", "version": "1.0.0", "kind": "script", "path": "git-update-all" },
     { "name": "git-update-rebase", "version": "1.0.0", "kind": "script", "path": "git-update-rebase" },

@@ -62,7 +62,7 @@ Unifies two branches such that commits in _branch1_ are followed by commits in _
 
 ### git-uncrustify
 
-Runs uncrustify on all modified or added c/cpp/h files in the working tree.
+Runs uncrustify on all modified or added c/cpp/h files in the working tree. Set the executable and config file with `git config uncrustify.path` and `git config uncrustify.config`; see `git-uncrustify -h` for the fallbacks.
 
 ### git-unpushed-all [-v|--verbose]
 

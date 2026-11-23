@@ -1,39 +1,60 @@
 #!/usr/bin/env bash
-# version: 1.0.0
+# version: 1.1.0
 #
 # Removes a submodule completely.
 
 set -e  # Exit on error
 
+usage() {
+    echo "Usage: git-remove-submodule <path> [<commit message>]"
+    echo "Removes the submodule at <path> completely and commits the removal. Other staged changes are not committed."
+}
+
+case "$1" in
+    -h|--help) usage; exit 0 ;;
+esac
+
 if [ $# -ne 1 ] && [ $# -ne 2 ]; then
-    echo "Usage: git-remove-submodule <path> <optional commit message>"
-    echo "Removes a submodule completely."
-    exit 1;
-fi
-
-if [ $# -gt 1 ]; then
-    COMMENT=$2
-else
-    COMMENT="Removed submodule $1"
-fi
-
-# Check if submodule exists
-if ! git config --file .gitmodules --get-regexp "^submodule\..*\.path$" | grep -q "$1"; then
-    echo "Submodule '$1' does not exist."
+    usage >&2
     exit 1
 fi
 
-# Remove submodule entry from .gitmodules
-git config -f .gitmodules --remove-section "submodule.$1" || true
-git add .gitmodules
+# Path relative to the repo root, without a trailing slash
+path="$(git rev-parse --show-prefix)${1%/}"
+message=${2:-"Removed submodule $path"}
 
-# Remove submodule entry from .git/config
-git config --remove-section "submodule.$1" || true
+cd "$(git rev-parse --show-toplevel)"
 
-# Remove the submodule files and commit the changes
-git submodule deinit "$1"
-git rm -r "$1"
-git commit -m "$COMMENT"
-rm -rf ".git/modules/$1"
+# Find the submodule's name, which can differ from its path
+name=""
+if [ -f .gitmodules ]; then
+    while IFS= read -r -d '' entry; do
+        if [ "${entry#*$'\n'}" = "$path" ]; then
+            name=${entry%%$'\n'*}
+            name=${name#submodule.}
+            name=${name%.path}
+            break
+        fi
+    done < <(git config -z -f .gitmodules --get-regexp '^submodule\..*\.path$')
+fi
 
-echo "Submodule '$1' removed successfully."
+if [ -z "$name" ]; then
+    echo "Error: '$path' is not a submodule." >&2
+    exit 1
+fi
+
+echo "- Removing submodule $path"
+if [ -e "$path/.git" ]; then
+    git submodule deinit -q -- "$path"
+fi
+git rm -q -- "$path"
+git commit -q -m "$message" -- .gitmodules "$path"
+
+# Remove the submodule's git dir and any parent directories left empty
+modules=$(git rev-parse --git-path modules)
+rm -rf "${modules:?}/$name"
+if [ "$name" != "${name%/*}" ]; then
+    (cd "$modules" && rmdir -p --ignore-fail-on-non-empty "${name%/*}")
+fi
+
+echo "- Done. Removed submodule $path."

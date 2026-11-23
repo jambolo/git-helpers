@@ -1,9 +1,8 @@
 {
   "manifestVersion": 1,
-  "updated": "2026-11-10",
+  "updated": "2026-11-22",
   "installRoot": "~/bin",
   "entries": [
-    { "name": "git-commit-updated-submodules", "version": "1.0.0", "kind": "script", "path": "git-commit-updated-submodules" },
     { "name": "git-diff-branches", "version": "1.0.0", "kind": "script", "path": "git-diff-branches" },
     { "name": "git-difftool-all", "version": "1.0.0", "kind": "script", "path": "git-difftool-all" },
     { "name": "git-fetch-all-repos", "version": "1.0.0", "kind": "script", "path": "git-fetch-all-repos" },
@@ -22,7 +21,10 @@
     { "name": "git-unpushed-all", "version": "1.0.0", "kind": "script", "path": "git-unpushed-all" },
     { "name": "git-update-all", "version": "1.0.0", "kind": "script", "path": "git-update-all" },
     { "name": "git-update-rebase", "version": "1.0.0", "kind": "script", "path": "git-update-rebase" },
-    { "name": "git-update-submodule", "version": "1.0.0", "kind": "script", "path": "git-update-submodule" },
+    { "name": "git-update-submodule", "version": "2.0.0", "kind": "script", "path": "git-update-submodule" },
     { "name": "update-projects.sh", "version": "1.1.0", "kind": "script", "path": "update-projects.sh" }
+  ],
+  "removed": [
+    { "name": "git-commit-updated-submodules", "kind": "script", "removed": "2026-11-22" }
   ]
 }

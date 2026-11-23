@@ -4,10 +4,6 @@ Scripts and aliases that make git easier to use
 
 ## Scripts
 
-### git-commit-updated-submodules
-
-Commits any submodule whose checked-out HEAD differs from the superproject's recorded commit, with a message showing the new short hash.
-
 ### git-diff-branches \<branch\> \<branch\>
 
 Displays the differences between two branches using difftool.
@@ -84,9 +80,9 @@ Fetches and fast-forwards all branches and submodules, and then updates all subm
 
 Pulls _branch_ and rebases the current branch on top of it.
 
-### git-update-submodule \<subproject-name\>
+### git-update-submodule \<submodule\> | --all
 
-Stages and commits a submodule update with a descriptive commit message showing the subproject's commit hash.
+Commits _submodule_ (name or path), or with `--all` every submodule, whose checked-out HEAD differs from the superproject's recorded commit, with a message showing the new short hash. Each submodule is committed separately, and other staged changes are not included.
 
 ## Utility Scripts
 

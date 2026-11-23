@@ -1,36 +1,79 @@
 #!/usr/bin/env bash
-# version: 1.0.0
+# version: 2.0.0
 #
-# Stages and commits a submodule update with a descriptive commit message.
+# Commits submodules whose checked-out commit differs from the commit recorded in the superproject's HEAD.
 
-set -e  # Exit on error
+set -euo pipefail
 
-# Get subproject name from command line
-if [ -z "$1" ]; then
-  echo "Usage: $0 <subproject-name>"
-  exit 1
+usage() {
+    echo "Usage: git-update-submodule <submodule> | --all"
+    echo "Commits the updated pointer of <submodule> (name or path), or of every updated submodule with --all."
+    echo "Each submodule is committed separately. Other staged changes are not included."
+}
+
+if [ $# -ne 1 ]; then
+    usage >&2
+    exit 1
 fi
 
-subproject="$1"
+case "$1" in
+    -h|--help) usage; exit 0 ;;
+esac
 
-# Check if subproject exists in .gitmodules
-if ! grep -q "path = $subproject" .gitmodules 2>/dev/null; then
-  echo "Error: '$subproject' is not a subproject"
-  exit 1
+# Run from the superproject root.
+cd "$(git rev-parse --show-toplevel)"
+
+# Collect submodule names and paths from .gitmodules
+names=()
+paths=()
+while read -r key path; do
+    name="${key#submodule.}"
+    names+=("${name%.path}")
+    paths+=("$path")
+done < <(git config --file .gitmodules --get-regexp '^submodule\..*\.path$' 2>/dev/null || true)
+
+if [ "${#paths[@]}" -eq 0 ]; then
+    echo "Error: No submodules found." >&2
+    exit 1
 fi
 
-# Get short hash of subproject HEAD
-cd "$subproject" || exit 1
-short_hash=$(git rev-parse --short HEAD)
-cd - > /dev/null || exit 1
-
-# Stage the subproject
-git add "$subproject"
-
-# Check if subproject has been modified
-if ! git diff --cached --quiet "$subproject"; then
-  git commit -m "Updated subproject $subproject to $short_hash"
+# Select the submodules to check
+if [ "$1" = "--all" ]; then
+    selected=("${paths[@]}")
 else
-  echo "Error: subproject '$subproject' has not been modified"
-  exit 1
+    target="${1%/}"
+    selected=()
+    for i in "${!paths[@]}"; do
+        if [ "${names[$i]}" = "$target" ] || [ "${paths[$i]}" = "$target" ]; then
+            selected=("${paths[$i]}")
+            break
+        fi
+    done
+    if [ "${#selected[@]}" -eq 0 ]; then
+        echo "Error: '$1' is not a submodule." >&2
+        exit 1
+    fi
+fi
+
+for sub in "${selected[@]}"; do
+    if [ ! -e "$sub/.git" ]; then
+        echo "- skipping uninitialized submodule: $sub"
+    fi
+done
+
+# Find selected submodules whose checked-out commit differs from HEAD (staged or not), in one call
+mapfile -d '' -t changed < <(git diff -z --name-only --ignore-submodules=dirty HEAD -- "${selected[@]}")
+wait $!
+
+committed=0
+for sub in "${changed[@]}"; do
+    [ -e "$sub/.git" ] || continue
+    short_hash="$(git -C "$sub" rev-parse --short HEAD)"
+    git commit --quiet -m "Updated ${sub} to ${short_hash}." -- "$sub"
+    echo "- committed submodule update: ${sub} -> ${short_hash}"
+    committed=$((committed + 1))
+done
+
+if [ "$committed" -eq 0 ]; then
+    echo "- no updated submodules found"
 fi

@@ -1,14 +1,33 @@
 #!/usr/bin/env bash
-# version: 1.0.0
+# version: 1.1.0
 #
 # Unifies two branches such that commits in branch 1 are followed by commits in branch 2
 
 set -e # Exit on error
 
-if [ $# -ne 2 ]; then
-    echo "Usage: git-sync <branch1> <branch2>"
+usage() {
+    echo "Usage: git-sync <branch1> [<branch2>]"
     echo "Unifies two branches such that commits in <branch1> are followed by commits in <branch2>."
-    exit 1;
+    echo "<branch2> defaults to the current branch."
+}
+
+if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    usage
+    exit 0
+fi
+
+if [ $# -eq 1 ]; then
+    current=$(git branch --show-current)
+    if [ -z "$current" ]; then
+        echo "Error: Not on a branch; specify <branch2>."
+        exit 1
+    fi
+    set -- "$1" "$current"
+fi
+
+if [ $# -ne 2 ]; then
+    usage
+    exit 1
 fi
 
 # Ensure both branches exist
@@ -29,5 +48,6 @@ git rebase "$1" "$2"
 echo "Now, fast-forwarding $1 to $2"
 git checkout "$1"
 git merge "$2" --ff-only
+git checkout "$2"
 
 echo "Done."

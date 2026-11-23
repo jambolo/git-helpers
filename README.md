@@ -24,10 +24,6 @@ Fetches and fast-forwards (if possible) all branches in the repo and all its sub
 
 For all git repositories in any subdirectories, fetches all branches and tags from all remotes.
 
-### git-pull-all-repos
-
-For all git repositories in any subdirectories, pulls all branches and tags from all remotes.
-
 ### git-pull-if-needed
 
 Pulls the current branch and updates the submodules if the local branch is behind and hasn't diverged.
@@ -88,7 +84,7 @@ Commits _submodule_ (name or path), or with `--all` every submodule, whose check
 
 ### update-projects.sh
 
-Iterates through all subdirectories with Git repositories and performs a pull and submodule update on each one. Skips the `3rdParty` directory. Useful for batch updating multiple projects.
+For each subdirectory that is a Git repository, fetches all remotes, rebases the current branch onto its upstream, and initializes and updates submodules. Skips worktrees and the `3rdParty` and `archived` directories. A detached HEAD, missing upstream, or failed rebase is reported and the branch is left unchanged. A failed fetch, rebase, or submodule update does not stop the remaining repositories, and the exit status is nonzero if anything failed.
 
 ## Configuration Files
 

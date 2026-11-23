@@ -104,7 +104,6 @@ Example Git configuration file with custom settings including:
 - Git LFS filter configuration
 - User identity settings
 - Diff and merge tool settings (Araxis Merge)
-- Custom git aliases for all the scripts in this repository
 
 To use this configuration, copy it to your user directory and adjust the paths and user information as needed.
 

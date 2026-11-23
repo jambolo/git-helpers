@@ -31,21 +31,3 @@
     path = C:/Program Files/Araxis/Araxis Merge/Compare.exe
 [push]
 	default = simple
-[alias]
-	diff-branches = !sh git-diff-branches
-	difftool-all = !sh git-difftool-all
-	ffwd = !sh git-ffwd
-	ffwd-all = !sh git-ffwd-all
-	pull-all-repos = !sh git-pull-all-repos
-	pull-if-needed = !sh git-pull-if-needed
-	push-wip = !sh git-push-wip
-	rebase-all = !sh git-rebase-all
-	remove-submodule = !sh git-remove-submodule
-	save-commits = !sh git-save-commits
-	showtool = !sh git-showtool
-	status-all = !sh git-status-all
-	sync = !sh git-sync
-	uncrustify = !sh git-uncrustify
-	update-all = !sh git-update-all
-	update-rebase = !sh git-update-rebase
-	update-submodule = !sh git-update-submodule

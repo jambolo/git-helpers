@@ -12,4 +12,4 @@ Collection of bash scripts and configuration for git workflow automation and pro
 - Scripts support `-h`/`--help` flags for usage info.
 - Scripts that take no arguments check `$# -ne 0` and print usage on unexpected args.
 - Output uses `echo` with `***` prefix for major steps in init scripts, and `- ` prefix for status lines in git scripts.
-- Git aliases in `my-.gitconfig` invoke scripts via `!sh git-<name>`.
+- Scripts are installed to `~/bin`; git runs them as `git <name>` without aliases.

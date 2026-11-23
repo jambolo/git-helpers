@@ -4,9 +4,9 @@ Scripts and aliases that make git easier to use
 
 ## Scripts
 
-### git-diff-branches \<branch\> \<branch\>
+### git-diff-branches \<commit1\> [commit2]
 
-Displays the differences between two branches using difftool.
+Displays the differences between two branches or commits using difftool. _commit2_ defaults to HEAD.
 
 ### git-difftool-all [path]
 

@@ -17,7 +17,7 @@
     { "name": "git-sync", "version": "1.1.0", "kind": "script", "path": "git-sync" },
     { "name": "git-uncrustify", "version": "2.0.0", "kind": "script", "path": "git-uncrustify" },
     { "name": "git-update-submodule", "version": "2.0.0", "kind": "script", "path": "git-update-submodule" },
-    { "name": "update-projects.sh", "version": "2.0.0", "kind": "script", "path": "update-projects.sh" }
+    { "name": "update-projects.sh", "version": "2.1.0", "kind": "script", "path": "update-projects.sh" }
   ],
   "removed": [
     { "name": "git-commit-updated-submodules", "kind": "script", "removed": "2026-11-22" },

@@ -68,7 +68,7 @@ Commits _submodule_ (name or path), or with `--all` every submodule, whose check
 
 ### update-projects.sh
 
-For each subdirectory that is a Git repository, fetches all remotes, rebases the current branch onto its upstream, and initializes and updates submodules. Skips worktrees and the `3rdParty` and `archived` directories. A detached HEAD, missing upstream, or failed rebase is reported and the branch is left unchanged. A failed fetch, rebase, or submodule update does not stop the remaining repositories, and the exit status is nonzero if anything failed.
+For each subdirectory that is a Git repository, fetches all remotes, rebases the current branch onto its upstream, and initializes and updates submodules. If the update succeeded and the upstream repository is archived on GitHub, the directory is moved into `archived`. Skips worktrees and the `3rdParty` and `archived` directories. A detached HEAD, missing upstream, or failed rebase is reported and the branch is left unchanged. A failed fetch, rebase, or submodule update does not stop the remaining repositories, and the exit status is nonzero if anything failed.
 
 ## Configuration Files
 

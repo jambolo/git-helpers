@@ -26,7 +26,7 @@ For all git repositories in any subdirectories, fetches all branches and tags fr
 
 ### git-pull-if-needed
 
-Pulls the current branch and updates the submodules if the local branch is behind and hasn't diverged.
+Fetches the upstream of the current branch, then fast-forwards the branch and updates the submodules if it is behind and hasn't diverged. Otherwise reports how many commits it is ahead or behind.
 
 ### git-push-wip
 

@@ -1,33 +1,52 @@
 #!/usr/bin/env bash
-# version: 1.0.0
+# version: 1.1.0
 #
-# Pulls the current branch and updates submodules if the local repo is behind and hasn't diverged
+# Fetches the upstream of the current branch, then fast-forwards the branch and updates submodules if the branch is
+# behind and hasn't diverged
 
 set -e  # Exit on error
 
-if [ $# -ne 0 ]; then
+usage() {
     echo "Usage: git-pull-if-needed"
-    echo "The current branch is pulled and the submodules are updated if the local repo is behind and hasn't diverged"
-    exit 1;
+    echo "Fetches the upstream of the current branch. If the branch is behind and hasn't diverged, fast-forwards it and"
+    echo "updates the submodules."
+}
+
+case "$1" in
+    -h|--help) usage; exit 0 ;;
+esac
+
+if [ $# -ne 0 ]; then
+    usage >&2
+    exit 1
 fi
 
-# Check if upstream exists
-if ! git rev-parse --abbrev-ref --symbolic-full-name @{u} >/dev/null 2>&1; then
-    echo "Error: No upstream branch set for current branch."
+branch=$(git branch --show-current)
+if [ -z "$branch" ]; then
+    echo "Error: HEAD is detached." >&2
     exit 2
 fi
 
-LOCAL=$(git rev-parse @)
-REMOTE=$(git rev-parse @{u})
-BASE=$(git merge-base @ @{u})
+if ! upstream=$(git rev-parse --abbrev-ref --symbolic-full-name '@{u}' 2> /dev/null); then
+    echo "Error: Branch '$branch' has no upstream." >&2
+    exit 2
+fi
 
-if [ "$LOCAL" = "$REMOTE" ]; then
-    echo "Already up-to-date."
-elif [ "$LOCAL" = "$BASE" ]; then
-    git pull
+if ! git fetch --quiet; then
+    echo "Error: Fetch failed." >&2
+    exit 1
+fi
+
+read -r behind ahead < <(git rev-list --left-right --count '@{u}...HEAD')
+
+if [ "$behind" -eq 0 ] && [ "$ahead" -eq 0 ]; then
+    echo "- $branch is up to date with $upstream."
+elif [ "$ahead" -eq 0 ]; then
+    echo "- $branch is $behind commit(s) behind $upstream. Fast-forwarding."
+    git merge --ff-only '@{u}'
     git submodule update --init --recursive
-elif [ "$REMOTE" = "$BASE" ]; then
-    echo "Need to push"
+elif [ "$behind" -eq 0 ]; then
+    echo "- $branch is $ahead commit(s) ahead of $upstream. Need to push."
 else
-    echo "Diverged"
+    echo "- $branch has diverged from $upstream: $ahead commit(s) ahead and $behind commit(s) behind."
 fi

@@ -8,7 +8,7 @@
     { "name": "git-fetch-all-repos", "version": "1.0.0", "kind": "script", "path": "git-fetch-all-repos" },
     { "name": "git-ffwd", "version": "1.1.0", "kind": "script", "path": "git-ffwd" },
     { "name": "git-ffwd-all", "version": "1.1.0", "kind": "script", "path": "git-ffwd-all" },
-    { "name": "git-pull-if-needed", "version": "1.0.0", "kind": "script", "path": "git-pull-if-needed" },
+    { "name": "git-pull-if-needed", "version": "1.1.0", "kind": "script", "path": "git-pull-if-needed" },
     { "name": "git-push-wip", "version": "1.0.0", "kind": "script", "path": "git-push-wip" },
     { "name": "git-rebase-all", "version": "1.0.0", "kind": "script", "path": "git-rebase-all" },
     { "name": "git-remove-submodule", "version": "1.0.0", "kind": "script", "path": "git-remove-submodule" },

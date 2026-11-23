@@ -1,16 +1,37 @@
 #!/usr/bin/env bash
-# version: 1.0.0
+# version: 1.1.0
 #
 # Fetches updates from remotes and fast-forwards or creates all remote branches in the repo and its submodules.
 
 set -e  # Exit on error
 
-if [[ "$1" == "-h" || "$1" == "--help" ]]; then
-    echo "Usage: git-ffwd-all [remote ...]"
+usage() {
+    echo "Usage: git-ffwd-all [<remote> ...]"
     echo "Fetches and fast-forwards (if possible) all remote branches in the repo and its submodules."
     echo "If no remotes are specified, all remotes are processed."
-    exit 0
+}
+
+case "$1" in
+    -h|--help) usage; exit 0 ;;
+esac
+
+# Quote the remotes for the command run in each submodule
+args=""
+if [ $# -gt 0 ]; then
+    printf -v args ' %q' "$@"
 fi
 
-git-ffwd "$@"
-git submodule foreach --recursive 'git-ffwd "$@"' -- "$@"
+status=0
+
+if ! git-ffwd "$@"; then
+    echo "Error: git-ffwd failed in $(git rev-parse --show-toplevel)." >&2
+    status=1
+fi
+
+# Continue with the remaining submodules if one fails
+if ! git submodule foreach --recursive \
+    "git-ffwd$args || { echo \"Error: git-ffwd failed in \$displaypath.\" >&2; exit 0; }"; then
+    status=1
+fi
+
+exit $status

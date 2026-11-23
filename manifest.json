@@ -10,7 +10,7 @@
     { "name": "git-ffwd-all", "version": "1.1.0", "kind": "script", "path": "git-ffwd-all" },
     { "name": "git-pull-if-needed", "version": "1.1.0", "kind": "script", "path": "git-pull-if-needed" },
     { "name": "git-push-wip", "version": "1.1.0", "kind": "script", "path": "git-push-wip" },
-    { "name": "git-rebase-all", "version": "1.0.0", "kind": "script", "path": "git-rebase-all" },
+    { "name": "git-rebase-all", "version": "1.1.0", "kind": "script", "path": "git-rebase-all" },
     { "name": "git-remove-submodule", "version": "1.0.0", "kind": "script", "path": "git-remove-submodule" },
     { "name": "git-save-commits", "version": "1.0.0", "kind": "script", "path": "git-save-commits" },
     { "name": "git-showtool", "version": "1.0.0", "kind": "script", "path": "git-showtool" },

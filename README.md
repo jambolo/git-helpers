@@ -52,10 +52,6 @@ _Note: The new branch name defaults to wip/\$\{branch\}-saved-\$\{timestamp\} if
 
 Shows the differences between _commit_ and its predecessor using difftool.
 
-### git-status-all
-
-Checks all git repositories in subdirectories, and list the ones with changes.
-
 ### git-sync \<branch1\> \<branch2\>
 
 Unifies two branches such that commits in _branch1_ are followed by commits in _branch2_.
@@ -63,18 +59,6 @@ Unifies two branches such that commits in _branch1_ are followed by commits in _
 ### git-uncrustify
 
 Runs uncrustify on all modified or added c/cpp/h files in the working tree. Set the executable and config file with `git config uncrustify.path` and `git config uncrustify.config`; see `git-uncrustify -h` for the fallbacks.
-
-### git-unpushed-all [-v|--verbose]
-
-Fetches from all remotes, then checks all git repositories in subdirectories recursively and reports branches that have commits not yet pushed to their upstream.
-
-### git-update-all
-
-Fetches and fast-forwards all branches and submodules, and then updates all submodules.
-
-### git-update-rebase \<branch\>
-
-Pulls _branch_ and rebases the current branch on top of it.
 
 ### git-update-submodule \<submodule\> | --all
 

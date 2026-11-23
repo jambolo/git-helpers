@@ -1,39 +1,57 @@
 #!/usr/bin/env bash
-# version: 1.0.0
+# version: 1.1.0
 #
 # Resets the current branch to the specified commit and moves the removed commits to a new branch.
 
 set -e # Exit on error
 
-if [ $# -eq 0 ]; then
-    echo "Usage: git-save-commits <commit> [new branch name]"
-    echo "Resets the current branch to the specified commit and moves the succeeding commits to a new branch."
-    exit 1;
+usage() {
+    echo "Usage: git-save-commits <commit> [<new branch name>]"
+    echo "Resets the current branch to <commit> and moves the succeeding commits to a new branch."
+    echo "The new branch name defaults to wip/<current branch>-saved-<timestamp>."
+}
+
+case "$1" in
+    -h|--help) usage; exit 0 ;;
+esac
+
+if [ $# -ne 1 ] && [ $# -ne 2 ]; then
+    usage >&2
+    exit 1
 fi
 
-# Abort if there are uncommitted changes
 if ! git diff-index --quiet HEAD --; then
-    echo "You have uncommitted changes."
+    echo "Error: You have uncommitted changes." >&2
     exit 1
 fi
 
 commit=$1
-if ! git rev-parse --verify "$commit" >/dev/null 2>&1; then
-    echo "Error: Commit '$commit' does not exist."
+if ! git rev-parse -q --verify "$commit^{commit}" > /dev/null; then
+    echo "Error: Commit '$commit' does not exist." >&2
     exit 1
 fi
 
-if [ $# -ge 2 ]; then
-    branch=$2
-else
-    branch="wip/$(git rev-parse --abbrev-ref HEAD)-saved-$(date +%Y%m%d-%H%M%S)"
+if ! git merge-base --is-ancestor "$commit" HEAD; then
+    echo "Error: '$commit' is not an ancestor of HEAD." >&2
+    exit 1
 fi
+
+count=$(git rev-list --count "$commit..HEAD")
+if [ "$count" -eq 0 ]; then
+    echo "- Nothing to save. '$commit' is the same commit as HEAD."
+    exit 0
+fi
+
+current=$(git branch --show-current)
+branch=${2:-"wip/${current:-detached}-saved-$(date +%Y%m%d-%H%M%S)"}
 
 if git show-ref --verify --quiet "refs/heads/$branch"; then
-    echo "Error: Branch '$branch' already exists."
+    echo "Error: Branch '$branch' already exists." >&2
     exit 1
 fi
 
-echo "Creating branch $branch from current HEAD"
+echo "- Moving $count commit(s) to $branch"
 git branch "$branch"
-git reset --hard "$commit"
+git reset -q --hard "$commit"
+
+echo "- Done. ${current:-HEAD} is now at $(git rev-parse --short HEAD)."
